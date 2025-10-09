@@ -1,0 +1,122 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Каталог - GULINE{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/catalog.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <h1>Каталог товаров</h1>
+        <p>Найдите идеальную одежду для себя</p>
+    </div>
+</section>
+
+<!-- Filters and Search -->
+<section class="filters-section">
+    <div class="container">
+        <div class="filters-container">
+            <form method="get" class="search-form">
+                <div class="search-box">
+                    <input type="text" name="search" class="search-input" placeholder="Поиск товаров..." value="{{ search_query }}">
+                    <i class="fas fa-search"></i>
+                </div>
+            </form>
+            
+            <div class="filters">
+                <a href="{% url 'shop:catalog' %}" class="filter-btn {% if not current_category and not current_gender %}active{% endif %}">Все товары</a>
+                <a href="{% url 'shop:catalog' %}?gender=men" class="filter-btn {% if current_gender == 'men' %}active{% endif %}">Мужская одежда</a>
+                <a href="{% url 'shop:catalog' %}?gender=women" class="filter-btn {% if current_gender == 'women' %}active{% endif %}">Женская одежда</a>
+                <a href="{% url 'shop:catalog' %}?gender=kids" class="filter-btn {% if current_gender == 'kids' %}active{% endif %}">Детская одежда</a>
+            </div>
+            
+            <div class="sort-options">
+                <form method="get" class="sort-form">
+                    {% if current_category %}<input type="hidden" name="category" value="{{ current_category.slug }}">{% endif %}
+                    {% if current_gender %}<input type="hidden" name="gender" value="{{ current_gender }}">{% endif %}
+                    {% if search_query %}<input type="hidden" name="search" value="{{ search_query }}">{% endif %}
+                    <select name="sort" class="sort-select" onchange="this.form.submit()">
+                        <option value="name" {% if sort_by == 'name' %}selected{% endif %}>По названию</option>
+                        <option value="price-low" {% if sort_by == 'price-low' %}selected{% endif %}>Цена: по возрастанию</option>
+                        <option value="price-high" {% if sort_by == 'price-high' %}selected{% endif %}>Цена: по убыванию</option>
+                        <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Сначала новые</option>
+                    </select>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Products Grid -->
+<section class="products-section">
+    <div class="container">
+        {% if products %}
+            <div class="products-grid" id="productsGrid">
+                {% for product in products %}
+                <div class="product-card" data-category="{{ product.gender }}">
+                    <div class="product-image">
+                        {% if product.main_image %}
+                            <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <div class="product-placeholder">
+                                <i class="fas fa-tshirt"></i>
+                            </div>
+                        {% endif %}
+                        <div class="product-overlay">
+                            <a href="{% url 'shop:product_detail' product.slug %}" class="quick-view-btn">Подробнее</a>
+                        </div>
+                        {% if product.is_featured %}
+                            <div class="product-badge">Популярное</div>
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name }}</h3>
+                        <div class="product-price">
+                            <span class="current-price">{{ product.price|floatformat:0 }} ₽</span>
+                            {% if product.old_price %}
+                                <span class="old-price">{{ product.old_price|floatformat:0 }} ₽</span>
+                                <span class="discount">-{{ product.discount_percentage }}%</span>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'shop:product_detail' product.slug %}" class="view-btn">Подробнее</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if products.has_other_pages %}
+            <div class="pagination">
+                {% if products.has_previous %}
+                    <a href="?page={{ products.previous_page_number }}{% if current_category %}&category={{ current_category.slug }}{% endif %}{% if current_gender %}&gender={{ current_gender }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}" class="page-link">← Предыдущая</a>
+                {% endif %}
+                
+                {% for num in products.paginator.page_range %}
+                    {% if products.number == num %}
+                        <span class="page-link active">{{ num }}</span>
+                    {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+                        <a href="?page={{ num }}{% if current_category %}&category={{ current_category.slug }}{% endif %}{% if current_gender %}&gender={{ current_gender }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}" class="page-link">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if products.has_next %}
+                    <a href="?page={{ products.next_page_number }}{% if current_category %}&category={{ current_category.slug }}{% endif %}{% if current_gender %}&gender={{ current_gender }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}" class="page-link">Следующая →</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="no-products-message">
+                <div class="no-products-content">
+                    <i class="fas fa-search"></i>
+                    <h3>Товары не найдены</h3>
+                    <p>Попробуйте изменить фильтры или поисковый запрос</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

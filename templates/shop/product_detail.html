@@ -1,0 +1,288 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - GULINE{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/product.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumbs -->
+<section class="breadcrumbs">
+    <div class="container">
+        <nav class="breadcrumb-nav">
+            <a href="{% url 'shop:home' %}">Главная</a>
+            <span class="breadcrumb-separator">/</span>
+            <a href="{% url 'shop:catalog' %}">Каталог</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">{{ product.name }}</span>
+        </nav>
+    </div>
+</section>
+
+<!-- Product Details -->
+<section class="product-details">
+    <div class="container">
+        <div class="product-layout">
+            <div class="product-gallery">
+                <div class="main-image">
+                    {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}" id="mainImage">
+                    {% else %}
+                        <div class="product-placeholder">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                {% if images %}
+                <div class="thumbnail-images">
+                    {% for image in images %}
+                    <div class="thumbnail {% if forloop.first %}active{% endif %}" onclick="changeMainImage('{{ image.image.url }}')">
+                        <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}">
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="product-info">
+                <h1 class="product-title">{{ product.name }}</h1>
+                
+                {% if reviews %}
+                <div class="product-rating">
+                    <div class="stars">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= avg_rating %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="far fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <span class="rating-text">({{ avg_rating|floatformat:1 }}) {{ reviews.count }} отзывов</span>
+                </div>
+                {% endif %}
+                
+                <div class="product-price">
+                    <span class="current-price">{{ product.price|floatformat:0 }} ₽</span>
+                    {% if product.old_price %}
+                        <span class="old-price">{{ product.old_price|floatformat:0 }} ₽</span>
+                        <span class="discount">-{{ product.discount_percentage }}%</span>
+                    {% endif %}
+                </div>
+                
+                <div class="product-description">
+                    <p>{{ product.description }}</p>
+                </div>
+                
+                <div class="product-options">
+                    {% if product.available_sizes_list %}
+                    <div class="size-info">
+                        <label>Доступные размеры:</label>
+                        <div class="size-list">
+                            {% for size in product.available_sizes_list %}
+                            <span class="size-item">{{ size }}</span>{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if product.available_colors_list %}
+                    <div class="color-info">
+                        <label>Доступные цвета:</label>
+                        <div class="color-list">
+                            {% for color in product.available_colors_list %}
+                            <div class="color-item">
+                                <span class="color-sample" style="background: {{ color }};"></span>
+                                <span class="color-name">{{ color|title }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="product-features">
+                    <div class="feature">
+                        <i class="fas fa-truck"></i>
+                        <span>Бесплатная доставка от 2000 ₽</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Гарантия качества</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-phone"></i>
+                        <span>Консультация по телефону</span>
+                    </div>
+                    <div class="feature telegram-feature">
+                        <a href="https://t.me/guline_support" class="telegram-order-btn" target="_blank">
+                            <i class="fab fa-telegram"></i>
+                            <span>Заказать через Telegram</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Product Tabs -->
+<section class="product-tabs">
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="description">Описание</button>
+            <button class="tab-btn" data-tab="specifications">Характеристики</button>
+            {% if reviews %}
+            <button class="tab-btn" data-tab="reviews">Отзывы</button>
+            {% endif %}
+        </div>
+        
+        <div class="tab-content">
+            <div class="tab-panel active" id="description">
+                <h3>Описание товара</h3>
+                <p>{{ product.description }}</p>
+                {% if product.short_description %}
+                <p>{{ product.short_description }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="tab-panel" id="specifications">
+                <h3>Характеристики</h3>
+                <table class="specifications-table">
+                    {% if product.material %}
+                    <tr>
+                        <td>Материал</td>
+                        <td>{{ product.material }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td>Страна производства</td>
+                        <td>{{ product.country }}</td>
+                    </tr>
+                    {% if product.care_instructions %}
+                    <tr>
+                        <td>Уход</td>
+                        <td>{{ product.care_instructions }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if product.available_colors_list %}
+                    <tr>
+                        <td>Цвета</td>
+                        <td>{{ product.available_colors|title }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if product.available_sizes_list %}
+                    <tr>
+                        <td>Размеры</td>
+                        <td>{{ product.available_sizes }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td>Пол</td>
+                        <td>{{ product.get_gender_display }}</td>
+                    </tr>
+                    <tr>
+                        <td>Категория</td>
+                        <td>{{ product.category.name }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            {% if reviews %}
+            <div class="tab-panel" id="reviews">
+                <h3>Отзывы покупателей</h3>
+                <div class="reviews-summary">
+                    <div class="rating-overview">
+                        <span class="rating-number">{{ avg_rating|floatformat:1 }}</span>
+                        <div class="stars">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= avg_rating %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <span class="reviews-count">на основе {{ reviews.count }} отзывов</span>
+                    </div>
+                </div>
+                
+                <div class="reviews-list">
+                    {% for review in reviews %}
+                    <div class="review">
+                        <div class="review-header">
+                            <span class="reviewer-name">{{ review.user.username }}</span>
+                            <div class="review-rating">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <h4>{{ review.title }}</h4>
+                        <p class="review-text">{{ review.text }}</p>
+                        <span class="review-date">{{ review.created_at|date:"d.m.Y" }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+        </div>
+    </div>
+</section>
+
+<!-- Related Products -->
+{% if related_products %}
+<section class="related-products">
+    <div class="container">
+        <h2 class="section-title">Похожие товары</h2>
+        <div class="products-grid">
+            {% for product in related_products %}
+            <div class="product-card">
+                <div class="product-image">
+                    {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="product-placeholder">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                    {% endif %}
+                    <div class="product-overlay">
+                        <a href="{% url 'shop:product_detail' product.slug %}" class="quick-view-btn">Подробнее</a>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <div class="product-price">
+                        <span class="current-price">{{ product.price|floatformat:0 }} ₽</span>
+                        {% if product.old_price %}
+                            <span class="old-price">{{ product.old_price|floatformat:0 }} ₽</span>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'shop:product_detail' product.slug %}" class="view-btn">Подробнее</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<script>
+function changeMainImage(imageUrl) {
+    document.getElementById('mainImage').src = imageUrl;
+    
+    // Update active thumbnail
+    document.querySelectorAll('.thumbnail').forEach(thumb => {
+        thumb.classList.remove('active');
+    });
+    event.target.closest('.thumbnail').classList.add('active');
+}
+</script>
+{% endblock %}

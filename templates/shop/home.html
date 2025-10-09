@@ -1,0 +1,162 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Главная - GULINE{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Новая коллекция</h1>
+        <p class="hero-subtitle">Современная мода для стильных людей</p>
+        <a href="{% url 'shop:catalog' %}" class="hero-btn">Смотреть коллекцию</a>
+    </div>
+    <div class="hero-image">
+        <div class="hero-placeholder">
+            <i class="fas fa-tshirt"></i>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="featured-products">
+    <div class="container">
+        <h2 class="section-title">Популярные товары</h2>
+        <div class="products-grid">
+            {% for product in featured_products %}
+            <div class="product-card">
+                <div class="product-image">
+                    {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="product-placeholder">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                    {% endif %}
+                    <div class="product-overlay">
+                        <a href="{% url 'shop:product_detail' product.slug %}" class="quick-view-btn">Подробнее</a>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <div class="product-price">
+                        <span class="current-price">{{ product.price|floatformat:0 }} ₽</span>
+                        {% if product.old_price %}
+                            <span class="old-price">{{ product.old_price|floatformat:0 }} ₽</span>
+                            <span class="discount">-{{ product.discount_percentage }}%</span>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'shop:product_detail' product.slug %}" class="view-btn">Подробнее</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-products">
+                <p>Популярные товары скоро появятся!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Categories -->
+<section class="categories">
+    <div class="container">
+        <h2 class="section-title">Категории</h2>
+        <div class="categories-grid">
+            {% for category in categories %}
+            <div class="category-card">
+                <div class="category-icon">
+                    {% if category.name == "Мужская одежда" %}
+                        <i class="fas fa-male"></i>
+                    {% elif category.name == "Женская одежда" %}
+                        <i class="fas fa-female"></i>
+                    {% elif category.name == "Детская одежда" %}
+                        <i class="fas fa-child"></i>
+                    {% else %}
+                        <i class="fas fa-tshirt"></i>
+                    {% endif %}
+                </div>
+                <h3>{{ category.name }}</h3>
+                <a href="{% url 'shop:catalog' %}?category={{ category.slug }}" class="category-link">Смотреть</a>
+            </div>
+            {% empty %}
+            <div class="no-categories">
+                <p>Категории скоро появятся!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Latest Products -->
+{% if latest_products %}
+<section class="latest-products">
+    <div class="container">
+        <h2 class="section-title">Новинки</h2>
+        <div class="products-grid">
+            {% for product in latest_products %}
+            <div class="product-card">
+                <div class="product-image">
+                    {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="product-placeholder">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                    {% endif %}
+                    <div class="product-overlay">
+                        <a href="{% url 'shop:product_detail' product.slug %}" class="quick-view-btn">Подробнее</a>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <div class="product-price">
+                        <span class="current-price">{{ product.price|floatformat:0 }} ₽</span>
+                        {% if product.old_price %}
+                            <span class="old-price">{{ product.old_price|floatformat:0 }} ₽</span>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'shop:product_detail' product.slug %}" class="view-btn">Подробнее</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Features Section -->
+<section class="features">
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <h3>Быстрая доставка</h3>
+                <p>Доставляем по всей России в течение 3-7 дней</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Гарантия качества</h3>
+                <p>Все товары проходят строгий контроль качества</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-undo"></i>
+                </div>
+                <h3>Легкий возврат</h3>
+                <p>Возврат товара в течение 14 дней без вопросов</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3>Поддержка 24/7</h3>
+                <p>Наша команда всегда готова помочь вам</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
