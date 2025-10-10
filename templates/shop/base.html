@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -5,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}GULINE - Модная одежда{% endblock %}</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    
     <!-- CSS -->
-    {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'css/shop_styles.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -99,7 +102,6 @@
                     <h4>Контакты</h4>
                     <p><i class="fas fa-phone"></i> +7 (999) 123-45-67</p>
                     <p><i class="fas fa-envelope"></i> info@guline.ru</p>
-                    <p><i class="fas fa-map-marker-alt"></i> Москва, ул. Примерная, 123</p>
                 </div>
             </div>
             <div class="footer-bottom">
