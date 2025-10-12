@@ -50,21 +50,6 @@
             <div class="product-info">
                 <h1 class="product-title">{{ product.name }}</h1>
                 
-                {% if reviews %}
-                <div class="product-rating">
-                    <div class="stars">
-                        {% for i in "12345" %}
-                            {% if forloop.counter <= avg_rating %}
-                                <i class="fas fa-star"></i>
-                            {% else %}
-                                <i class="far fa-star"></i>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                    <span class="rating-text">({{ avg_rating|floatformat:1 }}) {{ reviews.count }} {% trans "отзывов" %}</span>
-                </div>
-                {% endif %}
-                
                 <div class="product-price">
                     <span class="current-price">{{ product.price|floatformat:0 }} ₽</span>
                     {% if product.old_price %}
@@ -78,10 +63,6 @@
                         <i class="far fa-heart"></i>
                         <span class="favorite-text">{% trans "Добавить в избранное" %}</span>
                     </button>
-                    <a href="https://t.me/z_gulinigor01" class="btn btn-secondary telegram-order-btn" target="_blank">
-                        <i class="fab fa-telegram"></i>
-                        <span>{% trans "Заказать через Telegram" %}</span>
-                    </a>
                 </div>
                 
                 <div class="product-description">
@@ -128,6 +109,10 @@
                         <i class="fas fa-phone"></i>
                         <span>{% trans "Консультация по телефону" %}</span>
                     </div>
+                        <a href="https://t.me/z_gulinigor01" class="btn btn-secondary telegram-order-btn" target="_blank">
+                            <i class="fab fa-telegram"></i>
+                            <span>{% trans "Заказать через Telegram" %}</span>
+                        </a>
                 </div>
             </div>
         </div>
@@ -140,9 +125,6 @@
         <div class="tabs">
             <button class="tab-btn active" data-tab="description">{% trans "Описание" %}</button>
             <button class="tab-btn" data-tab="specifications">{% trans "Характеристики" %}</button>
-            {% if reviews %}
-            <button class="tab-btn" data-tab="reviews">{% trans "Отзывы" %}</button>
-            {% endif %}
         </div>
         
         <div class="tab-content">
@@ -195,49 +177,6 @@
                     </tr>
                 </table>
             </div>
-            
-            {% if reviews %}
-            <div class="tab-panel" id="reviews">
-                <h3>{% trans "Отзывы покупателей" %}</h3>
-                <div class="reviews-summary">
-                    <div class="rating-overview">
-                        <span class="rating-number">{{ avg_rating|floatformat:1 }}</span>
-                        <div class="stars">
-                            {% for i in "12345" %}
-                                {% if forloop.counter <= avg_rating %}
-                                    <i class="fas fa-star"></i>
-                                {% else %}
-                                    <i class="far fa-star"></i>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                        <span class="reviews-count">{% trans "на основе" %} {{ reviews.count }} {% trans "отзывов" %}</span>
-                    </div>
-                </div>
-                
-                <div class="reviews-list">
-                    {% for review in reviews %}
-                    <div class="review">
-                        <div class="review-header">
-                            <span class="reviewer-name">{{ review.user.username }}</span>
-                            <div class="review-rating">
-                                {% for i in "12345" %}
-                                    {% if forloop.counter <= review.rating %}
-                                        <i class="fas fa-star"></i>
-                                    {% else %}
-                                        <i class="far fa-star"></i>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                        <h4>{{ review.title }}</h4>
-                        <p class="review-text">{{ review.text }}</p>
-                        <span class="review-date">{{ review.created_at|date:"d.m.Y" }}</span>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
             
         </div>
     </div>

@@ -301,8 +301,8 @@
     }
 }
 
-/* HTMX Product Actions */
-.product-actions {
+/* HTMX Product Actions - только для карточек товаров */
+.product-card .product-actions {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -2076,67 +2076,118 @@ main {
     color: white;
 }
 
-/* Product Detail Page Favorite Button */
-.product-actions {
+/* Product Detail Page Actions - чистые стили */
+.product-details .product-actions {
     display: flex;
     gap: 1rem;
     margin-bottom: 2rem;
     flex-wrap: wrap;
+    position: static;
+    opacity: 1;
+    top: auto;
+    right: auto;
 }
 
-.product-actions .favorite-btn {
+/* Product Detail Page Favorite Button - гармоничные стили */
+.product-details .product-actions .favorite-btn {
     flex: 1;
     min-width: 200px;
-    padding: 1rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
+    padding: 0.875rem 1.25rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #e9ecef;
+    cursor: pointer;
+    text-decoration: none;
 }
 
-.product-actions .favorite-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+.product-details .product-actions .favorite-btn:hover {
+    background: #e9ecef;
+    color: #495057;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.product-actions .favorite-btn.active {
+.product-details .product-actions .favorite-btn.active {
     background: #e74c3c;
     color: white;
+    border-color: #e74c3c;
 }
 
-.product-actions .favorite-btn.active:hover {
+.product-details .product-actions .favorite-btn.active:hover {
     background: #c0392b;
+    border-color: #c0392b;
 }
 
-.product-actions .favorite-btn i {
-    font-size: 1.2rem;
+.product-details .product-actions .favorite-btn i {
+    font-size: 1rem;
 }
 
-.product-actions .telegram-order-btn {
+/* Product Detail Page Telegram Button - гармоничные стили */
+.product-details .product-actions a[href*="t.me"],
+.product-details .product-actions .telegram-order-btn {
     flex: 1;
     min-width: 200px;
-    padding: 1rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
+    padding: 0.875rem 1.25rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    text-decoration: none;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     background: #0088cc;
     color: white;
+    border: 1px solid #0088cc;
+    text-decoration: none;
+    cursor: pointer;
 }
 
-.product-actions .telegram-order-btn:hover {
+.product-details .product-actions a[href*="t.me"]:hover,
+.product-details .product-actions .telegram-order-btn:hover {
     background: #006699;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+    border-color: #006699;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 136, 204, 0.25);
     color: white;
     text-decoration: none;
+}
+
+/* Адаптивные стили для кнопок на мобильных устройствах */
+@media (max-width: 768px) {
+    .product-details .product-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .product-details .product-actions .favorite-btn,
+    .product-details .product-actions .telegram-order-btn {
+        min-width: auto;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-details .product-actions {
+        margin-bottom: 1.5rem;
+    }
+    
+    .product-details .product-actions .favorite-btn,
+    .product-details .product-actions .telegram-order-btn {
+        padding: 0.7rem 0.875rem;
+        font-size: 0.8rem;
+        gap: 0.4rem;
+    }
 }
 
 /* Favorites Page Styles */
