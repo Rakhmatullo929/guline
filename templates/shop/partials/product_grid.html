@@ -1,0 +1,89 @@
+{% load static %}
+{% load i18n %}
+
+<!-- Product Grid -->
+<div class="product-grid" id="product-grid">
+    {% for product in products %}
+        <div class="product-card" hx-boost="true">
+            <div class="product-image">
+                <a href="{% url 'shop:product_detail' product.slug %}">
+                    {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}" loading="lazy">
+                    {% else %}
+                        <div class="product-placeholder">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                    {% endif %}
+                    {% if product.discount_percentage > 0 %}
+                        <div class="discount-badge">-{{ product.discount_percentage }}%</div>
+                    {% endif %}
+                </a>
+                <div class="product-actions">
+                    <button class="action-btn favorite-btn" 
+                            data-product-id="{{ product.id }}"
+                            title="{% trans 'Добавить в избранное' %}">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <button class="action-btn quick-view-btn" 
+                            hx-get="{% url 'shop:htmx_product_details' product.slug %}"
+                            hx-target="#quick-view-modal"
+                            hx-swap="innerHTML"
+                            title="{% trans 'Быстрый просмотр' %}">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="product-info">
+                <h3 class="product-name">
+                    <a href="{% url 'shop:product_detail' product.slug %}">{{ product.name }}</a>
+                </h3>
+                <div class="product-price">
+                    {% if product.old_price %}
+                        <span class="old-price">{{ product.old_price }} ₽</span>
+                    {% endif %}
+                    <span class="current-price">{{ product.price }} ₽</span>
+                </div>
+                <div class="product-rating">
+                    {% if product.reviews.exists %}
+                        {% with avg_rating=product.reviews.all|length %}
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= avg_rating %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        {% endwith %}
+                    {% else %}
+                        <span class="no-rating">{% trans "Нет оценок" %}</span>
+                    {% endif %}
+                </div>
+                <a href="{% url 'shop:product_detail' product.slug %}" class="view-btn">
+                    {% trans "Подробнее" %}
+                </a>
+            </div>
+        </div>
+    {% empty %}
+        <div class="no-products">
+            <i class="fas fa-search"></i>
+            <h3>{% trans "Товары не найдены" %}</h3>
+            <p>{% trans "Попробуйте изменить параметры поиска" %}</p>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Load More Button -->
+{% if has_next %}
+    <div class="load-more-container">
+        <button class="load-more-btn" 
+                hx-get="{% url 'shop:htmx_load_more_products' %}?page={{ next_page }}{% if current_category %}&category={{ current_category.slug }}{% endif %}{% if current_gender %}&gender={{ current_gender }}{% endif %}"
+                hx-target="#product-grid"
+                hx-swap="beforeend"
+                hx-indicator="#loading-spinner">
+            <span class="btn-text">{% trans "Загрузить еще" %}</span>
+            <div id="loading-spinner" class="htmx-indicator">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+        </button>
+    </div>
+{% endif %}

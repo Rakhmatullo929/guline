@@ -1,13 +1,15 @@
 {% extends 'shop/base.html' %}
+{% load i18n %}
 
-{% block title %}Контакты - GULINE{% endblock %}
+{% block title %}{% trans "Контакты" %} - GULINE{% endblock %}
 
 {% block content %}
 <!-- Page Header -->
 <section class="page-header">
     <div class="container">
-        <h1>Контакты</h1>
-        <p>Свяжитесь с нами любым удобным способом</p>
+        <br><br>
+        <h1>{% trans "Контакты" %}</h1>
+        <p>{% trans "Свяжитесь с нами любым удобным способом" %}</p>
     </div>
 </section>
 
@@ -17,62 +19,59 @@
         <div class="contact-grid">
             <!-- Contact Info -->
             <div class="contact-info-section">
-                <h2>Наши контакты</h2>
+                <h2>{% trans "Наши контакты" %}</h2>
                 <div class="contact-cards">
                     <div class="contact-card">
                         <div class="contact-icon">
                             <i class="fas fa-phone"></i>
                         </div>
-                        <div class="contact-details">
-                            <h3>Телефон</h3>
-                            <p>+7 (999) 123-45-67</p>
-                            <span>Пн-Пт: 9:00 - 21:00<br>Сб-Вс: 10:00 - 20:00</span>
-                        </div>
+                        <a href="tel:+998914111144" style="text-decoration: none; color: inherit;">
+
+                            <div class="contact-details">
+                                <h3>{% trans "Телефон" %}</h3>
+                                <p>+998 91 411 11 44</p>
+                                <span>{% trans "Пн-Пт: 9:00 - 21:00" %}<br>{% trans "Сб-Вс: 10:00 - 20:00" %}</span>
+                            </div>
+                        </a>
                     </div>
-                    
+
                     <div class="contact-card">
                         <div class="contact-icon">
                             <i class="fas fa-envelope"></i>
                         </div>
                         <div class="contact-details">
-                            <h3>Email</h3>
+                            <h3>{% trans "Email" %}</h3>
                             <p>info@guline.ru</p>
-                            <span>Ответим в течение 24 часов</span>
+                            <span>{% trans "Ответим в течение 24 часов" %}</span>
                         </div>
                     </div>
-                    
-                    
+
+
                     <div class="contact-card">
                         <div class="contact-icon">
                             <i class="fab fa-telegram"></i>
                         </div>
-                        <div class="contact-details">
-                            <h3>Telegram</h3>
-                            <p>@guline_support</p>
-                            <span>Быстрые ответы на вопросы</span>
-                        </div>
+                        <a href="https://t.me/guline_uz" target="_blank" style="text-decoration: none; color: inherit;">
+                            <div class="contact-details">
+                                <h3>{% trans "Telegram" %}</h3>
+                                <p>@guline_uz</p>
+                                <span>{% trans "Актуальное в телеграмме" %}</span>
+                            </div>
+                        </a>
                     </div>
                 </div>
 
                 <!-- Social Media -->
                 <div class="social-section">
-                    <h3>Мы в социальных сетях</h3>
+                    <h3>{% trans "Мы в социальных сетях" %}</h3>
                     <div class="social-links">
                         <a href="#" class="social-link instagram">
                             <i class="fab fa-instagram"></i>
-                            <span>Instagram</span>
+                            <span>{% trans "Instagram" %}</span>
                         </a>
                         <a href="#" class="social-link telegram">
                             <i class="fab fa-telegram"></i>
-                            <span>Telegram</span>
-                        </a>
-                        <a href="#" class="social-link whatsapp">
-                            <i class="fab fa-whatsapp"></i>
-                            <span>WhatsApp</span>
-                        </a>
-                        <a href="#" class="social-link vk">
-                            <i class="fab fa-vk"></i>
-                            <span>ВКонтакте</span>
+                            <span>{% trans "Telegram" %}</span>
                         </a>
                     </div>
                 </div>
@@ -80,43 +79,44 @@
 
             <!-- Contact Form -->
             <div class="contact-form-section">
-                <h2>Напишите нам</h2>
+                <h2>{% trans "Напишите нам" %}</h2>
                 <form class="contact-form">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="name">Имя *</label>
+                            <label for="name">{% trans "Имя" %} *</label>
                             <input type="text" id="name" name="name" required>
                         </div>
                         <div class="form-group">
-                            <label for="email">Email *</label>
+                            <label for="email">{% trans "Email" %} *</label>
                             <input type="email" id="email" name="email" required>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="phone">Телефон</label>
+                        <label for="phone">{% trans "Телефон" %}</label>
                         <input type="tel" id="phone" name="phone">
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="subject">Тема *</label>
+                        <label for="subject">{% trans "Тема" %} *</label>
                         <select id="subject" name="subject" required>
-                            <option value="">Выберите тему</option>
-                            <option value="question">Общий вопрос</option>
-                            <option value="order">Вопрос по заказу</option>
-                            <option value="cooperation">Сотрудничество</option>
-                            <option value="feedback">Отзыв/предложение</option>
+                            <option value="">{% trans "Выберите тему" %}</option>
+                            <option value="question">{% trans "Общий вопрос" %}</option>
+                            <option value="order">{% trans "Вопрос по заказу" %}</option>
+                            <option value="cooperation">{% trans "Сотрудничество" %}</option>
+                            <option value="feedback">{% trans "Отзыв/предложение" %}</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="message">Сообщение *</label>
-                        <textarea id="message" name="message" rows="5" required placeholder="Опишите ваш вопрос или предложение..."></textarea>
+                        <label for="message">{% trans "Сообщение" %} *</label>
+                        <textarea id="message" name="message" rows="5" required
+                            placeholder="{% trans 'Опишите ваш вопрос или предложение...' %}"></textarea>
                     </div>
-                    
+
                     <button type="submit" class="submit-btn">
                         <i class="fas fa-paper-plane"></i>
-                        Отправить сообщение
+                        {% trans "Отправить сообщение" %}
                     </button>
                 </form>
             </div>
@@ -124,42 +124,31 @@
 
         <!-- FAQ Section -->
         <div class="faq-section">
-            <h2 class="section-title">Часто задаваемые вопросы</h2>
+            <h2 class="section-title">{% trans "Часто задаваемые вопросы" %}</h2>
             <div class="faq-grid">
                 <div class="faq-item">
-                    <h3>Как оформить заказ?</h3>
-                    <p>Выберите понравившиеся товары в каталоге, добавьте их в корзину и следуйте инструкциям для оформления заказа. Мы свяжемся с вами для подтверждения.</p>
+                    <h3>{% trans "Как оформить заказ?" %}</h3>
+                    <p>{% trans "Выберите понравившиеся товары в каталоге, добавьте их в корзину и следуйте инструкциям для оформления заказа. Мы свяжемся с вами для подтверждения." %}</p>
                 </div>
                 <div class="faq-item">
-                    <h3>Какие способы оплаты доступны?</h3>
-                    <p>Мы принимаем оплату наличными при получении, банковскими картами и банковским переводом. Все способы оплаты безопасны.</p>
+                    <h3>{% trans "Какие способы оплаты доступны?" %}</h3>
+                    <p>{% trans "Мы принимаем оплату наличными при получении, банковскими картами и банковским переводом. Все способы оплаты безопасны." %}</p>
                 </div>
                 <div class="faq-item">
-                    <h3>Сколько стоит доставка?</h3>
-                    <p>Доставка по Москве - 300 ₽ (бесплатно от 2000 ₽). По России - 200 ₽ (бесплатно от 3000 ₽). Самовывоз бесплатный.</p>
+                    <h3>{% trans "Сколько стоит доставка?" %}</h3>
+                    <p>{% trans "Доставка по Москве - 300 ₽ (бесплатно от 2000 ₽). По России - 200 ₽ (бесплатно от 3000 ₽). Самовывоз бесплатный." %}</p>
                 </div>
                 <div class="faq-item">
-                    <h3>Можно ли вернуть товар?</h3>
-                    <p>Да, вы можете вернуть товар в течение 14 дней с момента покупки, если он не был в употреблении и сохранен товарный вид.</p>
+                    <h3>{% trans "Можно ли вернуть товар?" %}</h3>
+                    <p>{% trans "Да, вы можете вернуть товар в течение 14 дней с момента покупки, если он не был в употреблении и сохранен товарный вид." %}</p>
                 </div>
                 <div class="faq-item">
-                    <h3>Как узнать размер?</h3>
-                    <p>На каждой странице товара есть таблица размеров. Если у вас есть сомнения, обратитесь к нашему консультанту.</p>
+                    <h3>{% trans "Как узнать размер?" %}</h3>
+                    <p>{% trans "На каждой странице товара есть таблица размеров. Если у вас есть сомнения, обратитесь к нашему консультанту." %}</p>
                 </div>
                 <div class="faq-item">
-                    <h3>Есть ли скидки для постоянных клиентов?</h3>
-                    <p>Да, мы регулярно проводим акции и предоставляем скидки постоянным клиентам. Следите за нашими новостями в социальных сетях.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Map Section -->
-        <div class="map-section">
-            <h2 class="section-title">Как нас найти</h2>
-            <div class="map-container">
-                <div class="map-placeholder">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <p>Карта будет добавлена позже</p>
+                    <h3>{% trans "Есть ли скидки для постоянных клиентов?" %}</h3>
+                    <p>{% trans "Да, мы регулярно проводим акции и предоставляем скидки постоянным клиентам. Следите за нашими новостями в социальных сетях." %}</p>
                 </div>
             </div>
         </div>

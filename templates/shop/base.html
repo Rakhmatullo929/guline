@@ -1,29 +1,32 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}GULINE - Модная одежда{% endblock %}</title>
+    <title>{% block title %}GULINE - {% trans "Модная одежда" %}{% endblock %}</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <link rel="stylesheet" href="{% static 'css/shop_styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=1.0">
+    <link rel="stylesheet" href="{% static 'css/shop_styles.css' %}?v=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <nav class="navbar">
-            <div class="nav-container">
-                <div class="nav-logo">
-                    <a href="{% url 'shop:home' %}">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <a href="{% url 'shop:home' %}">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 35 550 400" class="logo">
                             <g fill="#2c2c2c" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
                                 <g data-paper-data="{&quot;isGlobalGroup&quot;:true,&quot;bounds&quot;:{&quot;x&quot;:65,&quot;y&quot;:210.17397501467258,&quot;width&quot;:420,&quot;height&quot;:49.65204997065484}}">
@@ -37,36 +40,137 @@
                                     </g>
                                 </g>
                             </g>
-                        </svg>
-                    </a>
-                </div>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="{% url 'shop:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Главная</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'shop:catalog' %}" class="nav-link {% if request.resolver_match.url_name == 'catalog' %}active{% endif %}">Каталог</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'shop:about' %}" class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">О нас</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'shop:contact' %}" class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Контакты</a>
-                    </li>
-                </ul>
-                <div class="nav-actions">
-                    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-                        <i class="fas fa-bars"></i>
-                    </button>
+                        </svg>    
+                </a>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <!-- HTMX Search -->
+        <div class="sidebar-search">
+            <div class="search-container">
+                <input type="text" 
+                       id="search-input" 
+                       placeholder="{% trans 'Поиск товаров...' %}"
+                       hx-get="{% url 'shop:htmx_product_search' %}"
+                       hx-trigger="keyup changed delay:500ms"
+                       hx-target="#search-results"
+                       hx-indicator="#search-loading">
+                <div id="search-loading" class="htmx-indicator">
+                    <i class="fas fa-spinner fa-spin"></i>
                 </div>
             </div>
+            <div id="search-results" class="search-results-dropdown">
+                <!-- HTMX will load search results here -->
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="{% url 'shop:home' %}" class="sidebar-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                        <i class="fas fa-home"></i>
+                        <span>{% trans "Главная" %}</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'shop:catalog' %}" class="sidebar-link {% if request.resolver_match.url_name == 'catalog' %}active{% endif %}">
+                        <i class="fas fa-th-large"></i>
+                        <span>{% trans "Каталог" %}</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'shop:favorites' %}" class="sidebar-link favorites-link {% if request.resolver_match.url_name == 'favorites' %}active{% endif %}">
+                        <i class="fas fa-heart"></i>
+                        <span>{% trans "Избранное" %}</span>
+                        <span class="favorites-counter" style="display: none;">0</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'shop:about' %}" class="sidebar-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+                        <i class="fas fa-info-circle"></i>
+                        <span>{% trans "О нас" %}</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'shop:contact' %}" class="sidebar-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
+                        <i class="fas fa-envelope"></i>
+                        <span>{% trans "Контакты" %}</span>
+                    </a>
+                </li>
+            </ul>
         </nav>
-    </header>
+        
+        <!-- Language Switcher -->
+        <div class="language-switcher">
+            <h4>{% trans "Язык" %}</h4>
+            <div class="language-flags">
+                {% get_current_language as LANGUAGE_CODE %}
+                <a href="{% url 'set_language' %}?lang=ru&next={{ request.get_full_path|urlencode }}" 
+                   class="language-flag {% if LANGUAGE_CODE == 'ru' %}active{% endif %}" 
+                   title="Русский">
+                    <span class="flag-icon">🇷🇺</span>
+                </a>
+                <a href="{% url 'set_language' %}?lang=en&next={{ request.get_full_path|urlencode }}" 
+                   class="language-flag {% if LANGUAGE_CODE == 'en' %}active{% endif %}" 
+                   title="English">
+                    <span class="flag-icon">🇺🇸</span>
+                </a>
+                <a href="{% url 'set_language' %}?lang=uz&next={{ request.get_full_path|urlencode }}" 
+                   class="language-flag {% if LANGUAGE_CODE == 'uz' %}active{% endif %}" 
+                   title="O'zbek">
+                    <span class="flag-icon">🇺🇿</span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="sidebar-social">
+                <a href="#" class="social-link instagram">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" fill="currentColor"/>
+                    </svg>
+                </a>
+                <a href="#" class="social-link telegram">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" fill="currentColor"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="sidebar-contact">
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 16.92V19.92C22.0011 20.1985 21.9441 20.4742 21.8325 20.7293C21.7209 20.9844 21.5573 21.2136 21.3521 21.4019C21.1468 21.5901 20.9046 21.7335 20.6407 21.8227C20.3769 21.9119 20.0974 21.9451 19.82 21.92C16.7428 21.5856 13.787 20.5341 11.19 18.85C8.77382 17.3147 6.72533 15.2662 5.18999 12.85C3.49997 10.2412 2.44824 7.271 2.11999 4.18C2.095 3.90347 2.12787 3.62476 2.21649 3.36162C2.30512 3.09849 2.44756 2.85669 2.63476 2.65162C2.82196 2.44655 3.0498 2.28271 3.30379 2.17052C3.55777 2.05833 3.83233 2.00026 4.10999 2H7.10999C7.59531 1.99522 8.06671 2.16708 8.43376 2.48353C8.80081 2.79999 9.03996 3.23945 9.10999 3.72C9.23662 4.68007 9.47144 5.62273 9.80999 6.53C9.94454 6.88792 9.97366 7.27691 9.89391 7.65088C9.81415 8.02485 9.62886 8.36811 9.35999 8.64L8.08999 9.91C9.51355 12.4135 11.5865 14.4864 14.09 15.91L15.36 14.64C15.6319 14.3711 15.9751 14.1858 16.3491 14.1061C16.7231 14.0263 17.1121 14.0555 17.47 14.19C18.3773 14.5286 19.3199 14.7634 20.28 14.89C20.7658 14.9585 21.2094 15.2032 21.5265 15.5775C21.8437 15.9518 22.0122 16.4296 22 16.92Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <span>+7 (999) 123-45-67</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Main Content -->
     <main>
         {% block content %}{% endblock %}
     </main>
+
+    <!-- HTMX Modals -->
+    <div id="quick-view-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <!-- HTMX will load content here -->
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -74,44 +178,133 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h4>GULINE</h4>
-                    <p>Современная мода для стильных людей</p>
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+                    <p>{% trans "Современная мода для стильных людей" %}</p>
+                    <div class="sidebar-social">
+                        <a href="#" class="social-link instagram">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" fill="currentColor"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link telegram">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" fill="currentColor"/>
+                            </svg>
+                        </a>
                     </div>
                 </div>
                 <div class="footer-section">
-                    <h4>Каталог</h4>
+                    <h4>{% trans "Каталог" %}</h4>
                     <ul>
-                        <li><a href="{% url 'shop:catalog' %}?gender=men">Мужская одежда</a></li>
-                        <li><a href="{% url 'shop:catalog' %}?gender=women">Женская одежда</a></li>
-                        <li><a href="{% url 'shop:catalog' %}?gender=kids">Детская одежда</a></li>
+                        <li><a href="{% url 'shop:catalog' %}?gender=men">{% trans "Мужская одежда" %}</a></li>
+                        <li><a href="{% url 'shop:catalog' %}?gender=women">{% trans "Женская одежда" %}</a></li>
+                        <li><a href="{% url 'shop:catalog' %}?gender=kids">{% trans "Детская одежда" %}</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>Информация</h4>
+                    <h4>{% trans "Информация" %}</h4>
                     <ul>
-                        <li><a href="{% url 'shop:about' %}">О нас</a></li>
-                        <li><a href="{% url 'shop:contact' %}">Контакты</a></li>
-                        <li><a href="#">Доставка и оплата</a></li>
-                        <li><a href="#">Возврат и обмен</a></li>
+                        <li><a href="{% url 'shop:about' %}">{% trans "О нас" %}</a></li>
+                        <li><a href="{% url 'shop:contact' %}">{% trans "Контакты" %}</a></li>
+                        <li><a href="#">{% trans "Доставка и оплата" %}</a></li>
+                        <li><a href="#">{% trans "Возврат и обмен" %}</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>Контакты</h4>
+                    <h4>{% trans "Контакты" %}</h4>
                     <p><i class="fas fa-phone"></i> +7 (999) 123-45-67</p>
                     <p><i class="fas fa-envelope"></i> info@guline.ru</p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 GULINE. Все права защищены.</p>
+                <p>&copy; 2025 GULINE. {% trans "Все права защищены" %}.</p>
             </div>
         </div>
     </footer>
 
     <!-- JavaScript -->
-    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/script.js' %}?v=1.0"></script>
+    <script src="{% static 'js/htmx-enhancements.js' %}?v=1.0"></script>
+    
+    <!-- Fallback Sidebar Script -->
+    <script>
+        // Simple fallback sidebar functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Fallback sidebar script loaded');
+            
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            
+            console.log('Fallback elements found:', {
+                mobileMenuBtn: !!mobileMenuBtn,
+                sidebar: !!sidebar,
+                sidebarToggle: !!sidebarToggle,
+                sidebarOverlay: !!sidebarOverlay
+            });
+            
+            // Open sidebar
+            function openSidebar() {
+                console.log('Fallback: Opening sidebar');
+                if (sidebar) sidebar.classList.add('open');
+                if (sidebarOverlay) sidebarOverlay.classList.add('active');
+                if (mobileMenuBtn) {
+                    mobileMenuBtn.classList.add('hidden');
+                }
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Close sidebar
+            function closeSidebar() {
+                console.log('Fallback: Closing sidebar');
+                if (sidebar) sidebar.classList.remove('open');
+                if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+                if (mobileMenuBtn) {
+                    mobileMenuBtn.classList.remove('hidden');
+                }
+                document.body.style.overflow = '';
+            }
+            
+            // Add event listeners
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Fallback: Mobile menu button clicked');
+                    openSidebar();
+                });
+            }
+            
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Fallback: Sidebar toggle clicked');
+                    closeSidebar();
+                });
+            }
+            
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Fallback: Overlay clicked');
+                    closeSidebar();
+                });
+            }
+            
+            // Close on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && sidebar && sidebar.classList.contains('open')) {
+                    console.log('Fallback: Escape key pressed');
+                    closeSidebar();
+                }
+            });
+            
+            console.log('Fallback sidebar script initialized');
+        });
+    </script>
+    
+    <!-- Favorites System -->
+    <script src="{% static 'js/favorites.js' %}"></script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>

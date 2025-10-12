@@ -1,0 +1,287 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Избранное" %} - GULINE{% endblock %}
+
+{% block extra_js %}
+<script>
+// Переводы для JavaScript
+const translations = {
+    emptyFavorites: "{% trans 'Список избранного пуст' %}",
+    addToFavorites: "{% trans 'Добавьте товары в избранное, чтобы они отображались здесь' %}",
+    goToCatalog: "{% trans 'Перейти в каталог' %}",
+    loadingFavorites: "{% trans 'Загрузка избранных товаров...' %}",
+    favoritesTitle: "{% trans 'Избранные товары' %}",
+    productsCount: "{% trans 'товаров' %}",
+    clearAll: "{% trans 'Очистить все' %}",
+    removeFromFavorites: "{% trans 'Удалить из избранного' %}",
+    menGender: "{% trans 'Мужская' %}",
+    womenGender: "{% trans 'Женская' %}",
+    kidsGender: "{% trans 'Детская' %}",
+    unisexGender: "{% trans 'Унисекс' %}",
+    sizes: "{% trans 'Размеры' %}",
+    details: "{% trans 'Подробнее' %}",
+    confirmClear: "{% trans 'Вы уверены, что хотите очистить весь список избранного?' %}"
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Таймаут для загрузки
+    const timeout = setTimeout(() => {
+        console.error('Timeout waiting for favoritesManager');
+        showEmptyFavorites();
+    }, 5000); // 5 секунд
+    
+    // Ждем инициализации favoritesManager
+    const checkFavoritesManager = () => {
+        if (window.favoritesManager) {
+            clearTimeout(timeout);
+            initFavoritesPage();
+        } else {
+            setTimeout(checkFavoritesManager, 100);
+        }
+    };
+    
+    checkFavoritesManager();
+});
+
+function initFavoritesPage() {
+    const favoritesManager = window.favoritesManager;
+    if (!favoritesManager) {
+        console.error('FavoritesManager not initialized');
+        showEmptyFavorites();
+        return;
+    }
+
+    // Получаем избранные товары
+    const favorites = favoritesManager.getFavorites();
+    
+    if (favorites.length === 0) {
+        showEmptyFavorites();
+        return;
+    }
+
+    // Загружаем данные товаров с сервера
+    loadFavoritesProducts(favorites);
+}
+
+function showEmptyFavorites() {
+    const container = document.querySelector('.favorites-container');
+    if (container) {
+        container.innerHTML = `
+            <div class="empty-favorites">
+                <div class="empty-favorites-content">
+                    <i class="fas fa-heart"></i>
+                    <h2>${translations.emptyFavorites}</h2>
+                    <p>${translations.addToFavorites}</p>
+                    <a href="{% url 'shop:catalog' %}" class="btn btn-primary">
+                        ${translations.goToCatalog}
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+}
+
+async function loadFavoritesProducts(productIds) {
+    const container = document.querySelector('.favorites-container');
+    if (!container) return;
+    
+    try {
+        // Показываем индикатор загрузки
+        container.innerHTML = `
+            <div class="loading-favorites">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>${translations.loadingFavorites}</p>
+            </div>
+        `;
+        
+        const response = await fetch('{% url "shop:api_favorites_data" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                product_ids: productIds
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.products && data.products.length > 0) {
+                renderFavoritesProducts(data.products);
+            } else {
+                showEmptyFavorites();
+            }
+        } else {
+            console.error('API response not ok:', response.status);
+            showEmptyFavorites();
+        }
+    } catch (error) {
+        console.error('Ошибка загрузки избранных товаров:', error);
+        showEmptyFavorites();
+    }
+}
+
+function renderFavoritesProducts(products) {
+    const container = document.querySelector('.favorites-container');
+    if (!container) return;
+
+    if (products.length === 0) {
+        showEmptyFavorites();
+        return;
+    }
+
+    let html = `
+        <div class="favorites-header">
+            <div class="favorites-header-left">
+                <h1>${translations.favoritesTitle}</h1>
+                <span class="favorites-count">${products.length} ${translations.productsCount}</span>
+            </div>
+            <div class="favorites-actions">
+                <button class="btn btn-secondary" onclick="clearAllFavorites()">
+                    <i class="fas fa-trash"></i>
+                    ${translations.clearAll}
+                </button>
+            </div>
+        </div>
+        <div class="favorites-grid">
+    `;
+
+    products.forEach(product => {
+        html += `
+            <div class="favorite-product-card" data-product-id="${product.id}">
+                <div class="product-image">
+                    <a href="/product/${product.slug}/">
+                        ${product.main_image ? 
+                            `<img src="${product.main_image}" alt="${product.name}" loading="lazy">` :
+                            `<div class="product-placeholder"><i class="fas fa-tshirt"></i></div>`
+                        }
+                        ${product.discount_percentage > 0 ? 
+                            `<div class="discount-badge">-${product.discount_percentage}%</div>` : 
+                            ''
+                        }
+                    </a>
+                    <button class="remove-favorite-btn" onclick="removeFromFavorites(${product.id})" title="${translations.removeFromFavorites}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">
+                        <a href="/product/${product.slug}/">${product.name}</a>
+                    </h3>
+                    <div class="product-category">
+                        <a href="/catalog/?category=${product.category.slug}">${product.category.name}</a>
+                    </div>
+                    <div class="product-price">
+                        ${product.old_price ? 
+                            `<span class="old-price">${product.old_price} ₽</span>` : 
+                            ''
+                        }
+                        <span class="current-price">${product.price} ₽</span>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-gender">
+                            <i class="fas fa-${product.gender === 'men' ? 'male' : product.gender === 'women' ? 'female' : 'child'}"></i>
+                            ${product.gender === 'men' ? translations.menGender : 
+                              product.gender === 'women' ? translations.womenGender : 
+                              product.gender === 'kids' ? translations.kidsGender : 
+                              translations.unisexGender}
+                        </div>
+                        ${product.available_sizes.length > 0 ? 
+                            `<div class="product-sizes">
+                                <strong>${translations.sizes}:</strong> ${product.available_sizes.join(', ')}
+                            </div>` : 
+                            ''
+                        }
+                    </div>
+                    <div class="product-actions">
+                        <a href="/product/${product.slug}/" class="btn btn-primary">
+                            ${translations.details}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function removeFromFavorites(productId) {
+    const favoritesManager = window.favoritesManager;
+    if (favoritesManager) {
+        favoritesManager.removeFromFavorites(productId);
+        
+        // Удаляем карточку товара из DOM
+        const card = document.querySelector(`[data-product-id="${productId}"]`);
+        if (card) {
+            card.remove();
+        }
+        
+        // Проверяем, остались ли товары
+        const remainingCards = document.querySelectorAll('.favorite-product-card');
+        if (remainingCards.length === 0) {
+            showEmptyFavorites();
+        } else {
+            // Обновляем счетчик
+            const countElement = document.querySelector('.favorites-count');
+            if (countElement) {
+                countElement.textContent = `${remainingCards.length} ${translations.productsCount}`;
+            }
+        }
+    }
+}
+
+function clearAllFavorites() {
+    if (confirm(translations.confirmClear)) {
+        const favoritesManager = window.favoritesManager;
+        if (favoritesManager) {
+            favoritesManager.clearFavorites();
+            showEmptyFavorites();
+        }
+    }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <h1>{% trans "Избранное" %}</h1>
+        <p>{% trans "Ваши любимые товары" %}</p>
+    </div>
+</section>
+
+<!-- Favorites Content -->
+<section class="favorites-section">
+    <div class="container">
+        <div class="favorites-container">
+            <!-- Fallback контент для случаев без JavaScript -->
+            <noscript>
+                <div class="empty-favorites">
+                    <div class="empty-favorites-content">
+                        <i class="fas fa-heart"></i>
+                        <h2>{% trans "JavaScript требуется" %}</h2>
+                        <p>{% trans "Для работы с избранным товарами необходимо включить JavaScript в вашем браузере" %}</p>
+                        <a href="{% url 'shop:catalog' %}" class="btn btn-primary">
+                            {% trans "Перейти в каталог" %}
+                        </a>
+                    </div>
+                </div>
+            </noscript>
+            
+            <!-- Контент будет загружен через JavaScript -->
+            <div class="loading-favorites" id="loading-indicator">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>{% trans "Загрузка избранных товаров..." %}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CSRF Token для AJAX запросов (не используется, но оставляем для совместимости) -->
+{% csrf_token %}
+{% endblock %}

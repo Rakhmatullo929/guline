@@ -1,0 +1,41 @@
+{% load static %}
+{% load i18n %}
+
+<!-- Search Results -->
+<div class="search-results">
+    {% if products %}
+        <div class="search-results-header">
+            <h3>{% trans "Результаты поиска" %} ({{ products|length }})</h3>
+        </div>
+        <div class="search-results-grid">
+            {% for product in products %}
+                <div class="search-result-item">
+                    <div class="result-image">
+                        <a href="{% url 'shop:product_detail' product.slug %}">
+                            {% if product.main_image %}
+                                <img src="{{ product.main_image.url }}" alt="{{ product.name }}" loading="lazy">
+                            {% else %}
+                                <div class="product-placeholder">
+                                    <i class="fas fa-tshirt"></i>
+                                </div>
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="result-info">
+                        <h4 class="result-name">
+                            <a href="{% url 'shop:product_detail' product.slug %}">{{ product.name }}</a>
+                        </h4>
+                        <div class="result-price">{{ product.price }} ₽</div>
+                        <div class="result-category">{{ product.category.name }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-search-results">
+            <i class="fas fa-search"></i>
+            <h3>{% trans "Ничего не найдено" %}</h3>
+            <p>{% trans "Попробуйте изменить поисковый запрос" %}</p>
+        </div>
+    {% endif %}
+</div>

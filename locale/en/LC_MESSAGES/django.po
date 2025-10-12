@@ -1,0 +1,777 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-11 19:59+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: shop/admin.py:41
+msgid "Основная информация"
+msgstr "Basic Information"
+
+#: shop/admin.py:44
+msgid "Цены"
+msgstr "Prices"
+
+#: shop/admin.py:47
+msgid "Изображения"
+msgstr "Images"
+
+#: shop/admin.py:50 templates/shop/product_detail.html:137
+#: templates/shop/product_detail.html:153
+msgid "Характеристики"
+msgstr "Specifications"
+
+#: shop/admin.py:53
+msgid "Размеры и цвета"
+msgstr "Sizes and Colors"
+
+#: shop/admin.py:56
+msgid "Статус и склад"
+msgstr "Status and Warehouse"
+
+#: shop/admin.py:59
+msgid "Метаданные"
+msgstr "Metadata"
+
+#: shop/models.py:10 shop/models.py:50 shop/models.py:154
+msgid "Название"
+msgstr "Name"
+
+#: shop/models.py:11 shop/models.py:51
+#: venv/lib/python3.10/site-packages/django/db/models/fields/__init__.py:2642
+msgid "URL"
+msgstr "URL"
+
+#: shop/models.py:12 shop/models.py:52 templates/shop/product_detail.html:136
+msgid "Описание"
+msgstr "Description"
+
+#: shop/models.py:13 shop/models.py:116
+msgid "Изображение"
+msgstr "Image"
+
+#: shop/models.py:14
+msgid "Активна"
+msgstr "Active"
+
+#: shop/models.py:15 shop/models.py:79 shop/models.py:141
+msgid "Создано"
+msgstr "Created"
+
+#: shop/models.py:16 shop/models.py:80
+msgid "Обновлено"
+msgstr "Updated"
+
+#: shop/models.py:19 shop/models.py:54 templates/shop/product_detail.html:188
+msgid "Категория"
+msgstr "Category"
+
+#: shop/models.py:20 templates/shop/home.html:64
+msgid "Категории"
+msgstr "Categories"
+
+#: shop/models.py:44
+msgid "Мужская"
+msgstr "Men's"
+
+#: shop/models.py:45
+msgid "Женская"
+msgstr "Women's"
+
+#: shop/models.py:46
+msgid "Детская"
+msgstr "Kids'"
+
+#: shop/models.py:47
+msgid "Унисекс"
+msgstr "Unisex"
+
+#: shop/models.py:53
+msgid "Краткое описание"
+msgstr "Short Description"
+
+#: shop/models.py:55 templates/shop/product_detail.html:184
+msgid "Пол"
+msgstr "Gender"
+
+#: shop/models.py:58
+msgid "Цена"
+msgstr "Price"
+
+#: shop/models.py:59
+msgid "Старая цена"
+msgstr "Old Price"
+
+#: shop/models.py:62 shop/models.py:118
+msgid "Основное изображение"
+msgstr "Main Image"
+
+#: shop/models.py:65 templates/shop/product_detail.html:157
+msgid "Материал"
+msgstr "Material"
+
+#: shop/models.py:66 templates/shop/product_detail.html:162
+msgid "Страна производства"
+msgstr "Country of Origin"
+
+#: shop/models.py:67
+msgid "Инструкции по уходу"
+msgstr "Care Instructions"
+
+#: shop/models.py:70
+msgid "Доступные размеры"
+msgstr "Available Sizes"
+
+#: shop/models.py:71
+msgid "Доступные цвета"
+msgstr "Available Colors"
+
+#: shop/models.py:74 shop/models.py:159
+msgid "Активен"
+msgstr "Active"
+
+#: shop/models.py:75
+msgid "Рекомендуемый"
+msgstr "Featured"
+
+#: shop/models.py:76
+msgid "Количество на складе"
+msgstr "Stock Quantity"
+
+#: shop/models.py:83 shop/models.py:115 shop/models.py:132
+msgid "Товар"
+msgstr "Product"
+
+#: shop/models.py:84
+msgid "Товары"
+msgstr "Products"
+
+#: shop/models.py:117
+msgid "Альтернативный текст"
+msgstr "Alt Text"
+
+#: shop/models.py:119
+msgid "Порядок"
+msgstr "Order"
+
+#: shop/models.py:122
+msgid "Изображение товара"
+msgstr "Product Image"
+
+#: shop/models.py:123
+msgid "Изображения товаров"
+msgstr "Product Images"
+
+#: shop/models.py:133
+msgid "Пользователь"
+msgstr "User"
+
+#: shop/models.py:136
+msgid "Оценка"
+msgstr "Rating"
+
+#: shop/models.py:138
+msgid "Заголовок"
+msgstr "Title"
+
+#: shop/models.py:139
+msgid "Текст отзыва"
+msgstr "Review Text"
+
+#: shop/models.py:140
+msgid "Одобрен"
+msgstr "Approved"
+
+#: shop/models.py:144
+msgid "Отзыв"
+msgstr "Review"
+
+#: shop/models.py:145 templates/shop/product_detail.html:139
+msgid "Отзывы"
+msgstr "Reviews"
+
+#: shop/models.py:155 templates/shop/contact.html:31
+#: templates/shop/contact.html:96
+msgid "Телефон"
+msgstr "Phone"
+
+#: shop/models.py:156 templates/shop/contact.html:43
+#: templates/shop/contact.html:90
+msgid "Email"
+msgstr "Email"
+
+#: shop/models.py:157
+msgid "Адрес"
+msgstr "Address"
+
+#: shop/models.py:158
+msgid "Часы работы"
+msgstr "Working Hours"
+
+#: shop/models.py:162
+msgid "Контакт"
+msgstr "Contact"
+
+#: shop/models.py:163 templates/shop/base.html:71 templates/shop/base.html:159
+#: templates/shop/base.html:165 templates/shop/contact.html:4
+#: templates/shop/contact.html:11
+msgid "Контакты"
+msgstr "Contacts"
+
+#: templates/shop/about.html:4 templates/shop/about.html:10
+#: templates/shop/base.html:65 templates/shop/base.html:158
+msgid "О нас"
+msgstr "About Us"
+
+#: templates/shop/about.html:11
+msgid "Узнайте больше о бренде GULINE"
+msgstr "Learn more about the GULINE brand"
+
+#: templates/shop/about.html:21
+msgid "Добро пожаловать в GULINE"
+msgstr "Welcome to GULINE"
+
+#: templates/shop/about.html:22
+msgid ""
+"Мы создаем стильную и качественную одежду для современных людей, которые "
+"ценят комфорт и элегантность в повседневной жизни."
+msgstr ""
+"We create stylish and quality clothing for modern people who value comfort "
+"and elegance in everyday life."
+
+#: templates/shop/about.html:23
+msgid ""
+"Наш бренд появился с простой идеей - сделать модную одежду доступной "
+"каждому, не жертвуя качеством и стилем. Мы тщательно отбираем материалы, "
+"следим за трендами и создаем коллекции, которые подходят для любого случая."
+msgstr ""
+"Our brand was born with a simple idea - to make fashionable clothing "
+"accessible to everyone without sacrificing quality and style. We carefully "
+"select materials, follow trends and create collections that suit any occasion."
+
+#: templates/shop/about.html:34
+msgid "Наши ценности"
+msgstr "Our Values"
+
+#: templates/shop/about.html:40
+msgid "Качество"
+msgstr "Quality"
+
+#: templates/shop/about.html:41
+msgid ""
+"Мы используем только высококачественные материалы и тщательно контролируем "
+"каждый этап производства"
+msgstr ""
+"We use only high-quality materials and carefully control every stage of "
+"production"
+
+#: templates/shop/about.html:47
+msgid "Стиль"
+msgstr "Style"
+
+#: templates/shop/about.html:48
+msgid ""
+"Наши дизайнеры создают актуальные модели, которые подчеркивают "
+"индивидуальность каждого клиента"
+msgstr ""
+"Our designers create relevant models that emphasize the individuality of "
+"each client"
+
+#: templates/shop/about.html:54
+msgid "Комфорт"
+msgstr "Comfort"
+
+#: templates/shop/about.html:55
+msgid ""
+"Мы заботимся о том, чтобы наша одежда была не только красивой, но и удобной "
+"для повседневной носки"
+msgstr ""
+"We care that our clothing is not only beautiful but also comfortable for "
+"daily wear"
+
+#: templates/shop/about.html:61
+msgid "Экологичность"
+msgstr "Sustainability"
+
+#: templates/shop/about.html:62
+msgid ""
+"Мы стремимся к устойчивому развитию и используем экологически чистые "
+"материалы"
+msgstr ""
+"We strive for sustainable development and use environmentally friendly "
+"materials"
+
+#: templates/shop/about.html:70
+msgid "Наша история"
+msgstr "Our History"
+
+#: templates/shop/about.html:75
+msgid "Основание бренда"
+msgstr "Brand Foundation"
+
+#: templates/shop/about.html:76
+msgid ""
+"GULINE был основан группой энтузиастов моды, которые хотели создать "
+"доступную и стильную одежду для всех"
+msgstr ""
+"GULINE was founded by a group of fashion enthusiasts who wanted to create "
+"affordable and stylish clothing for everyone"
+
+#: templates/shop/about.html:82
+msgid "Первая коллекция"
+msgstr "First Collection"
+
+#: templates/shop/about.html:83
+msgid ""
+"Мы выпустили нашу первую коллекцию, которая получила положительные отзывы от "
+"первых клиентов"
+msgstr ""
+"We released our first collection, which received positive feedback from our "
+"first customers"
+
+#: templates/shop/about.html:89
+msgid "Расширение ассортимента"
+msgstr "Product Range Expansion"
+
+#: templates/shop/about.html:90
+msgid ""
+"Добавили детскую линию и расширили мужскую коллекцию, став полноценным "
+"fashion-брендом"
+msgstr ""
+"Added children's line and expanded men's collection, becoming a full-"
+"fledged fashion brand"
+
+#: templates/shop/about.html:96
+msgid "Онлайн-магазин"
+msgstr "Online Store"
+
+#: templates/shop/about.html:97
+msgid ""
+"Запустили собственный интернет-магазин для удобства наших клиентов по всей "
+"России"
+msgstr ""
+"Launched our own online store for the convenience of our customers "
+"throughout Russia"
+
+#: templates/shop/about.html:103
+msgid "Новые горизонты"
+msgstr "New Horizons"
+
+#: templates/shop/about.html:104
+msgid ""
+"Продолжаем развиваться и создавать новые коллекции, следуя современным "
+"трендам"
+msgstr ""
+"We continue to develop and create new collections, following modern trends"
+
+#: templates/shop/about.html:115
+msgid "GULINE в цифрах"
+msgstr "GULINE in Numbers"
+
+#: templates/shop/about.html:119
+msgid "Довольных клиентов"
+msgstr "Satisfied Customers"
+
+#: templates/shop/about.html:123
+msgid "Моделей одежды"
+msgstr "Clothing Models"
+
+#: templates/shop/about.html:127
+msgid "Городов доставки"
+msgstr "Delivery Cities"
+
+#: templates/shop/about.html:131
+msgid "Года на рынке"
+msgstr "Years in Market"
+
+#: templates/shop/base.html:8
+msgid "Модная одежда"
+msgstr "Fashion Clothing"
+
+#: templates/shop/base.html:53 templates/shop/home.html:4
+#: templates/shop/product_detail.html:16
+msgid "Главная"
+msgstr "Home"
+
+#: templates/shop/base.html:59 templates/shop/base.html:148
+#: templates/shop/catalog.html:5 templates/shop/product_detail.html:18
+msgid "Каталог"
+msgstr "Catalog"
+
+#: templates/shop/base.html:79
+msgid "Язык"
+msgstr "Language"
+
+#: templates/shop/base.html:106 templates/shop/contact.html:70
+msgid "Instagram"
+msgstr "Instagram"
+
+#: templates/shop/base.html:112 templates/shop/contact.html:56
+#: templates/shop/contact.html:74
+msgid "Telegram"
+msgstr "Telegram"
+
+#: templates/shop/base.html:141 templates/shop/home.html:11
+msgid "Современная мода для стильных людей"
+msgstr "Modern fashion for stylish people"
+
+#: templates/shop/base.html:150 templates/shop/catalog.html:33
+msgid "Мужская одежда"
+msgstr "Men's Clothing"
+
+#: templates/shop/base.html:151 templates/shop/catalog.html:34
+msgid "Женская одежда"
+msgstr "Women's Clothing"
+
+#: templates/shop/base.html:152 templates/shop/catalog.html:35
+msgid "Детская одежда"
+msgstr "Kids' Clothing"
+
+#: templates/shop/base.html:156
+msgid "Информация"
+msgstr "Information"
+
+#: templates/shop/base.html:160
+msgid "Доставка и оплата"
+msgstr "Delivery and Payment"
+
+#: templates/shop/base.html:161
+msgid "Возврат и обмен"
+msgstr "Returns and Exchanges"
+
+#: templates/shop/base.html:171
+msgid "Все права защищены"
+msgstr "All rights reserved"
+
+#: templates/shop/catalog.html:15
+msgid "Каталог товаров"
+msgstr "Product Catalog"
+
+#: templates/shop/catalog.html:16
+msgid "Найдите идеальную одежду для себя"
+msgstr "Find the perfect clothing for yourself"
+
+#: templates/shop/catalog.html:26
+msgid "Поиск товаров..."
+msgstr "Search products..."
+
+#: templates/shop/catalog.html:32
+msgid "Все товары"
+msgstr "All Products"
+
+#: templates/shop/catalog.html:44
+msgid "По названию"
+msgstr "By Name"
+
+#: templates/shop/catalog.html:45
+msgid "Цена: по возрастанию"
+msgstr "Price: Low to High"
+
+#: templates/shop/catalog.html:46
+msgid "Цена: по убыванию"
+msgstr "Price: High to Low"
+
+#: templates/shop/catalog.html:47
+msgid "Сначала новые"
+msgstr "Newest First"
+
+#: templates/shop/catalog.html:71 templates/shop/catalog.html:86
+#: templates/shop/home.html:37 templates/shop/home.html:49
+#: templates/shop/home.html:108 templates/shop/home.html:119
+#: templates/shop/product_detail.html:258
+#: templates/shop/product_detail.html:269
+msgid "Подробнее"
+msgstr "More Details"
+
+#: templates/shop/catalog.html:74
+msgid "Популярное"
+msgstr "Popular"
+
+#: templates/shop/catalog.html:96
+msgid "Предыдущая"
+msgstr "Previous"
+
+#: templates/shop/catalog.html:108
+msgid "Следующая"
+msgstr "Next"
+
+#: templates/shop/catalog.html:116
+msgid "Товары не найдены"
+msgstr "Products not found"
+
+#: templates/shop/catalog.html:117
+msgid "Попробуйте изменить фильтры или поисковый запрос"
+msgstr "Try changing filters or search query"
+
+#: templates/shop/contact.html:12
+msgid "Свяжитесь с нами любым удобным способом"
+msgstr "Contact us in any convenient way"
+
+#: templates/shop/contact.html:22
+msgid "Наши контакты"
+msgstr "Our Contacts"
+
+#: templates/shop/contact.html:33
+msgid "Пн-Пт: 9:00 - 21:00"
+msgstr "Mon-Fri: 9:00 - 21:00"
+
+#: templates/shop/contact.html:33
+msgid "Сб-Вс: 10:00 - 20:00"
+msgstr "Sat-Sun: 10:00 - 20:00"
+
+#: templates/shop/contact.html:45
+msgid "Ответим в течение 24 часов"
+msgstr "We will respond within 24 hours"
+
+#: templates/shop/contact.html:58
+msgid "Актуальное в телеграмме"
+msgstr "Latest in Telegram"
+
+#: templates/shop/contact.html:66
+msgid "Мы в социальных сетях"
+msgstr "We are on social networks"
+
+#: templates/shop/contact.html:82
+msgid "Напишите нам"
+msgstr "Write to us"
+
+#: templates/shop/contact.html:86
+msgid "Имя"
+msgstr "Name"
+
+#: templates/shop/contact.html:101
+msgid "Тема"
+msgstr "Subject"
+
+#: templates/shop/contact.html:103
+msgid "Выберите тему"
+msgstr "Select subject"
+
+#: templates/shop/contact.html:104
+msgid "Общий вопрос"
+msgstr "General Question"
+
+#: templates/shop/contact.html:105
+msgid "Вопрос по заказу"
+msgstr "Order Question"
+
+#: templates/shop/contact.html:106
+msgid "Сотрудничество"
+msgstr "Cooperation"
+
+#: templates/shop/contact.html:107
+msgid "Отзыв/предложение"
+msgstr "Feedback/Suggestion"
+
+#: templates/shop/contact.html:112
+msgid "Сообщение"
+msgstr "Message"
+
+#: templates/shop/contact.html:114
+msgid "Опишите ваш вопрос или предложение..."
+msgstr "Describe your question or suggestion..."
+
+#: templates/shop/contact.html:119
+msgid "Отправить сообщение"
+msgstr "Send Message"
+
+#: templates/shop/contact.html:127
+msgid "Часто задаваемые вопросы"
+msgstr "Frequently Asked Questions"
+
+#: templates/shop/contact.html:130
+msgid "Как оформить заказ?"
+msgstr "How to place an order?"
+
+#: templates/shop/contact.html:131
+msgid ""
+"Выберите понравившиеся товары в каталоге, добавьте их в корзину и следуйте "
+"инструкциям для оформления заказа. Мы свяжемся с вами для подтверждения."
+msgstr ""
+"Choose your favorite products in the catalog, add them to cart and follow "
+"the instructions to place an order. We will contact you for confirmation."
+
+#: templates/shop/contact.html:134
+msgid "Какие способы оплаты доступны?"
+msgstr "What payment methods are available?"
+
+#: templates/shop/contact.html:135
+msgid ""
+"Мы принимаем оплату наличными при получении, банковскими картами и "
+"банковским переводом. Все способы оплаты безопасны."
+msgstr ""
+"We accept cash on delivery, bank cards and bank transfer. All payment "
+"methods are secure."
+
+#: templates/shop/contact.html:138
+msgid "Сколько стоит доставка?"
+msgstr "How much does delivery cost?"
+
+#: templates/shop/contact.html:139
+msgid ""
+"Доставка по Москве - 300 ₽ (бесплатно от 2000 ₽). По России - 200 ₽ "
+"(бесплатно от 3000 ₽). Самовывоз бесплатный."
+msgstr ""
+"Delivery in Moscow - 300 ₽ (free from 2000 ₽). In Russia - 200 ₽ (free "
+"from 3000 ₽). Pickup is free."
+
+#: templates/shop/contact.html:142
+msgid "Можно ли вернуть товар?"
+msgstr "Can I return the product?"
+
+#: templates/shop/contact.html:143
+msgid ""
+"Да, вы можете вернуть товар в течение 14 дней с момента покупки, если он не "
+"был в употреблении и сохранен товарный вид."
+msgstr ""
+"Yes, you can return the product within 14 days of purchase if it has not "
+"been used and the product appearance is preserved."
+
+#: templates/shop/contact.html:146
+msgid "Как узнать размер?"
+msgstr "How to know the size?"
+
+#: templates/shop/contact.html:147
+msgid ""
+"На каждой странице товара есть таблица размеров. Если у вас есть сомнения, "
+"обратитесь к нашему консультанту."
+msgstr ""
+"Each product page has a size chart. If you have doubts, contact our "
+"consultant."
+
+#: templates/shop/contact.html:150
+msgid "Есть ли скидки для постоянных клиентов?"
+msgstr "Are there discounts for regular customers?"
+
+#: templates/shop/contact.html:151
+msgid ""
+"Да, мы регулярно проводим акции и предоставляем скидки постоянным клиентам. "
+"Следите за нашими новостями в социальных сетях."
+msgstr ""
+"Yes, we regularly hold promotions and provide discounts to regular "
+"customers. Follow our news on social networks."
+
+#: templates/shop/home.html:10
+msgid "Новая коллекция"
+msgstr "New Collection"
+
+#: templates/shop/home.html:12
+msgid "Смотреть коллекцию"
+msgstr "View Collection"
+
+#: templates/shop/home.html:24
+msgid "Популярные товары"
+msgstr "Popular Products"
+
+#: templates/shop/home.html:54
+msgid "Популярные товары скоро появятся!"
+msgstr "Popular products coming soon!"
+
+#: templates/shop/home.html:80
+msgid "Смотреть"
+msgstr "View"
+
+#: templates/shop/home.html:84
+msgid "Категории скоро появятся!"
+msgstr "Categories coming soon!"
+
+#: templates/shop/home.html:95
+msgid "Новинки"
+msgstr "New Arrivals"
+
+#: templates/shop/home.html:136
+msgid "Быстрая доставка"
+msgstr "Fast Delivery"
+
+#: templates/shop/home.html:137
+msgid "Доставляем по всей России в течение 3-7 дней"
+msgstr "We deliver throughout Russia within 3-7 days"
+
+#: templates/shop/home.html:143 templates/shop/product_detail.html:114
+msgid "Гарантия качества"
+msgstr "Quality Guarantee"
+
+#: templates/shop/home.html:144
+msgid "Все товары проходят строгий контроль качества"
+msgstr "All products undergo strict quality control"
+
+#: templates/shop/home.html:150
+msgid "Легкий возврат"
+msgstr "Easy Returns"
+
+#: templates/shop/home.html:151
+msgid "Возврат товара в течение 14 дней без вопросов"
+msgstr "Product return within 14 days without questions"
+
+#: templates/shop/home.html:157
+msgid "Поддержка 24/7"
+msgstr "24/7 Support"
+
+#: templates/shop/home.html:158
+msgid "Наша команда всегда готова помочь вам"
+msgstr "Our team is always ready to help you"
+
+#: templates/shop/product_detail.html:64 templates/shop/product_detail.html:209
+msgid "отзывов"
+msgstr "reviews"
+
+#: templates/shop/product_detail.html:83
+msgid "Доступные размеры:"
+msgstr "Available sizes:"
+
+#: templates/shop/product_detail.html:94
+msgid "Доступные цвета:"
+msgstr "Available colors:"
+
+#: templates/shop/product_detail.html:110
+msgid "Бесплатная доставка от 2000 ₽"
+msgstr "Free delivery from 2000 ₽"
+
+#: templates/shop/product_detail.html:118
+msgid "Консультация по телефону"
+msgstr "Phone consultation"
+
+#: templates/shop/product_detail.html:123
+msgid "Заказать через Telegram"
+msgstr "Order via Telegram"
+
+#: templates/shop/product_detail.html:145
+msgid "Описание товара"
+msgstr "Product Description"
+
+#: templates/shop/product_detail.html:167
+msgid "Уход"
+msgstr "Care"
+
+#: templates/shop/product_detail.html:173
+msgid "Цвета"
+msgstr "Colors"
+
+#: templates/shop/product_detail.html:179
+msgid "Размеры"
+msgstr "Sizes"
+
+#: templates/shop/product_detail.html:196
+msgid "Отзывы покупателей"
+msgstr "Customer Reviews"
+
+#: templates/shop/product_detail.html:209
+msgid "на основе"
+msgstr "based on"
+
+#: templates/shop/product_detail.html:245
+msgid "Похожие товары"
+msgstr "Similar Products"

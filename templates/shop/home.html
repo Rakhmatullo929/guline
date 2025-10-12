@@ -1,14 +1,15 @@
 {% extends 'shop/base.html' %}
+{% load i18n %}
 
-{% block title %}Главная - GULINE{% endblock %}
+{% block title %}{% trans "Главная" %} - GULINE{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
 <section class="hero">
     <div class="hero-content">
-        <h1 class="hero-title">Новая коллекция</h1>
-        <p class="hero-subtitle">Современная мода для стильных людей</p>
-        <a href="{% url 'shop:catalog' %}" class="hero-btn">Смотреть коллекцию</a>
+        <h1 class="hero-title">{% trans "Новая коллекция" %}</h1>
+        <p class="hero-subtitle">{% trans "Современная мода для стильных людей" %}</p>
+        <a href="{% url 'shop:catalog' %}" class="hero-btn">{% trans "Смотреть коллекцию" %}</a>
     </div>
     <div class="hero-image">
         <div class="hero-placeholder">
@@ -20,37 +21,71 @@
 <!-- Featured Products -->
 <section class="featured-products">
     <div class="container">
-        <h2 class="section-title">Популярные товары</h2>
+        <h2 class="section-title">{% trans "Популярные товары" %}</h2>
         <div class="products-grid">
             {% for product in featured_products %}
-            <div class="product-card">
+            <div class="product-card" hx-boost="true">
                 <div class="product-image">
                     {% if product.main_image %}
-                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}" loading="lazy">
                     {% else %}
                         <div class="product-placeholder">
                             <i class="fas fa-tshirt"></i>
                         </div>
                     {% endif %}
-                    <div class="product-overlay">
-                        <a href="{% url 'shop:product_detail' product.slug %}" class="quick-view-btn">Подробнее</a>
+                    {% if product.discount_percentage > 0 %}
+                        <div class="discount-badge">-{{ product.discount_percentage }}%</div>
+                    {% endif %}
+                    <div class="product-actions">
+                        <button class="action-btn favorite-btn" 
+                                hx-post="{% url 'shop:htmx_toggle_favorite' product.id %}"
+                                hx-target="this"
+                                hx-swap="outerHTML"
+                                title="{% trans 'Добавить в избранное' %}">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <button class="action-btn quick-view-btn" 
+                                hx-get="{% url 'shop:htmx_product_details' product.slug %}"
+                                hx-target="#quick-view-modal"
+                                hx-swap="innerHTML"
+                                title="{% trans 'Быстрый просмотр' %}">
+                            <i class="fas fa-eye"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="product-info">
-                    <h3 class="product-name">{{ product.name }}</h3>
+                    <h3 class="product-name">
+                        <a href="{% url 'shop:product_detail' product.slug %}">{{ product.name }}</a>
+                    </h3>
                     <div class="product-price">
-                        <span class="current-price">{{ product.price|floatformat:0 }} ₽</span>
                         {% if product.old_price %}
                             <span class="old-price">{{ product.old_price|floatformat:0 }} ₽</span>
-                            <span class="discount">-{{ product.discount_percentage }}%</span>
+                        {% endif %}
+                        <span class="current-price">{{ product.price|floatformat:0 }} ₽</span>
+                    </div>
+                    <div class="product-rating">
+                        {% if product.reviews.exists %}
+                            {% with avg_rating=product.reviews.all|length %}
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= avg_rating %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endwith %}
+                        {% else %}
+                            <span class="no-rating">{% trans "Нет оценок" %}</span>
                         {% endif %}
                     </div>
-                    <a href="{% url 'shop:product_detail' product.slug %}" class="view-btn">Подробнее</a>
+                    <a href="{% url 'shop:product_detail' product.slug %}" class="view-btn">
+                        {% trans "Подробнее" %}
+                    </a>
                 </div>
             </div>
             {% empty %}
             <div class="no-products">
-                <p>Популярные товары скоро появятся!</p>
+                <p>{% trans "Популярные товары скоро появятся!" %}</p>
             </div>
             {% endfor %}
         </div>
@@ -60,7 +95,7 @@
 <!-- Categories -->
 <section class="categories">
     <div class="container">
-        <h2 class="section-title">Категории</h2>
+        <h2 class="section-title">{% trans "Категории" %}</h2>
         <div class="categories-grid">
             {% for category in categories %}
             <div class="category-card">
@@ -76,11 +111,11 @@
                     {% endif %}
                 </div>
                 <h3>{{ category.name }}</h3>
-                <a href="{% url 'shop:catalog' %}?category={{ category.slug }}" class="category-link">Смотреть</a>
+                <a href="{% url 'shop:catalog' %}?category={{ category.slug }}" class="category-link">{% trans "Смотреть" %}</a>
             </div>
             {% empty %}
             <div class="no-categories">
-                <p>Категории скоро появятся!</p>
+                <p>{% trans "Категории скоро появятся!" %}</p>
             </div>
             {% endfor %}
         </div>
@@ -91,31 +126,66 @@
 {% if latest_products %}
 <section class="latest-products">
     <div class="container">
-        <h2 class="section-title">Новинки</h2>
+        <h2 class="section-title">{% trans "Новинки" %}</h2>
         <div class="products-grid">
             {% for product in latest_products %}
-            <div class="product-card">
+            <div class="product-card" hx-boost="true">
                 <div class="product-image">
                     {% if product.main_image %}
-                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}" loading="lazy">
                     {% else %}
                         <div class="product-placeholder">
                             <i class="fas fa-tshirt"></i>
                         </div>
                     {% endif %}
-                    <div class="product-overlay">
-                        <a href="{% url 'shop:product_detail' product.slug %}" class="quick-view-btn">Подробнее</a>
+                    {% if product.discount_percentage > 0 %}
+                        <div class="discount-badge">-{{ product.discount_percentage }}%</div>
+                    {% endif %}
+                    <div class="product-actions">
+                        <button class="action-btn favorite-btn" 
+                                hx-post="{% url 'shop:htmx_toggle_favorite' product.id %}"
+                                hx-target="this"
+                                hx-swap="outerHTML"
+                                title="{% trans 'Добавить в избранное' %}">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <button class="action-btn quick-view-btn" 
+                                hx-get="{% url 'shop:htmx_product_details' product.slug %}"
+                                hx-target="#quick-view-modal"
+                                hx-swap="innerHTML"
+                                title="{% trans 'Быстрый просмотр' %}">
+                            <i class="fas fa-eye"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="product-info">
-                    <h3 class="product-name">{{ product.name }}</h3>
+                    <h3 class="product-name">
+                        <a href="{% url 'shop:product_detail' product.slug %}">{{ product.name }}</a>
+                    </h3>
                     <div class="product-price">
-                        <span class="current-price">{{ product.price|floatformat:0 }} ₽</span>
                         {% if product.old_price %}
                             <span class="old-price">{{ product.old_price|floatformat:0 }} ₽</span>
                         {% endif %}
+                        <span class="current-price">{{ product.price|floatformat:0 }} ₽</span>
                     </div>
-                    <a href="{% url 'shop:product_detail' product.slug %}" class="view-btn">Подробнее</a>
+                    <div class="product-rating">
+                        {% if product.reviews.exists %}
+                            {% with avg_rating=product.reviews.all|length %}
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= avg_rating %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endwith %}
+                        {% else %}
+                            <span class="no-rating">{% trans "Нет оценок" %}</span>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'shop:product_detail' product.slug %}" class="view-btn">
+                        {% trans "Подробнее" %}
+                    </a>
                 </div>
             </div>
             {% endfor %}
@@ -132,29 +202,29 @@
                 <div class="feature-icon">
                     <i class="fas fa-truck"></i>
                 </div>
-                <h3>Быстрая доставка</h3>
-                <p>Доставляем по всей России в течение 3-7 дней</p>
+                <h3>{% trans "Быстрая доставка" %}</h3>
+                <p>{% trans "Доставляем по всей России в течение 3-7 дней" %}</p>
             </div>
             <div class="feature-item">
                 <div class="feature-icon">
                     <i class="fas fa-shield-alt"></i>
                 </div>
-                <h3>Гарантия качества</h3>
-                <p>Все товары проходят строгий контроль качества</p>
+                <h3>{% trans "Гарантия качества" %}</h3>
+                <p>{% trans "Все товары проходят строгий контроль качества" %}</p>
             </div>
             <div class="feature-item">
                 <div class="feature-icon">
                     <i class="fas fa-undo"></i>
                 </div>
-                <h3>Легкий возврат</h3>
-                <p>Возврат товара в течение 14 дней без вопросов</p>
+                <h3>{% trans "Легкий возврат" %}</h3>
+                <p>{% trans "Возврат товара в течение 14 дней без вопросов" %}</p>
             </div>
             <div class="feature-item">
                 <div class="feature-icon">
                     <i class="fas fa-headset"></i>
                 </div>
-                <h3>Поддержка 24/7</h3>
-                <p>Наша команда всегда готова помочь вам</p>
+                <h3>{% trans "Поддержка 24/7" %}</h3>
+                <p>{% trans "Наша команда всегда готова помочь вам" %}</p>
             </div>
         </div>
     </div>

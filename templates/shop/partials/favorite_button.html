@@ -1,0 +1,15 @@
+{% load static %}
+{% load i18n %}
+
+<!-- Favorite Button -->
+<button class="action-btn favorite-btn {% if is_favorite %}active{% endif %}" 
+        hx-post="{% url 'shop:htmx_toggle_favorite' product.id %}"
+        hx-target="this"
+        hx-swap="outerHTML"
+        title="{% if is_favorite %}{% trans 'Удалить из избранного' %}{% else %}{% trans 'Добавить в избранное' %}{% endif %}">
+    {% if is_favorite %}
+        <i class="fas fa-heart"></i>
+    {% else %}
+        <i class="far fa-heart"></i>
+    {% endif %}
+</button>

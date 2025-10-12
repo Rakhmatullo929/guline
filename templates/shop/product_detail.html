@@ -1,5 +1,6 @@
 {% extends 'shop/base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}{{ product.name }} - GULINE{% endblock %}
 
@@ -12,9 +13,9 @@
 <section class="breadcrumbs">
     <div class="container">
         <nav class="breadcrumb-nav">
-            <a href="{% url 'shop:home' %}">Главная</a>
+            <a href="{% url 'shop:home' %}">{% trans "Главная" %}</a>
             <span class="breadcrumb-separator">/</span>
-            <a href="{% url 'shop:catalog' %}">Каталог</a>
+            <a href="{% url 'shop:catalog' %}">{% trans "Каталог" %}</a>
             <span class="breadcrumb-separator">/</span>
             <span class="breadcrumb-current">{{ product.name }}</span>
         </nav>
@@ -60,7 +61,7 @@
                             {% endif %}
                         {% endfor %}
                     </div>
-                    <span class="rating-text">({{ avg_rating|floatformat:1 }}) {{ reviews.count }} отзывов</span>
+                    <span class="rating-text">({{ avg_rating|floatformat:1 }}) {{ reviews.count }} {% trans "отзывов" %}</span>
                 </div>
                 {% endif %}
                 
@@ -72,6 +73,17 @@
                     {% endif %}
                 </div>
                 
+                <div class="product-actions">
+                    <button class="btn btn-primary favorite-btn" data-product-id="{{ product.id }}">
+                        <i class="far fa-heart"></i>
+                        <span class="favorite-text">{% trans "Добавить в избранное" %}</span>
+                    </button>
+                    <a href="https://t.me/z_gulinigor01" class="btn btn-secondary telegram-order-btn" target="_blank">
+                        <i class="fab fa-telegram"></i>
+                        <span>{% trans "Заказать через Telegram" %}</span>
+                    </a>
+                </div>
+                
                 <div class="product-description">
                     <p>{{ product.description }}</p>
                 </div>
@@ -79,7 +91,7 @@
                 <div class="product-options">
                     {% if product.available_sizes_list %}
                     <div class="size-info">
-                        <label>Доступные размеры:</label>
+                        <label>{% trans "Доступные размеры:" %}</label>
                         <div class="size-list">
                             {% for size in product.available_sizes_list %}
                             <span class="size-item">{{ size }}</span>{% if not forloop.last %}, {% endif %}
@@ -90,7 +102,7 @@
                     
                     {% if product.available_colors_list %}
                     <div class="color-info">
-                        <label>Доступные цвета:</label>
+                        <label>{% trans "Доступные цвета:" %}</label>
                         <div class="color-list">
                             {% for color in product.available_colors_list %}
                             <div class="color-item">
@@ -106,21 +118,15 @@
                 <div class="product-features">
                     <div class="feature">
                         <i class="fas fa-truck"></i>
-                        <span>Бесплатная доставка от 2000 ₽</span>
+                        <span>{% trans "Бесплатная доставка от 2000 ₽" %}</span>
                     </div>
                     <div class="feature">
                         <i class="fas fa-shield-alt"></i>
-                        <span>Гарантия качества</span>
+                        <span>{% trans "Гарантия качества" %}</span>
                     </div>
                     <div class="feature">
                         <i class="fas fa-phone"></i>
-                        <span>Консультация по телефону</span>
-                    </div>
-                    <div class="feature telegram-feature">
-                        <a href="https://t.me/guline_support" class="telegram-order-btn" target="_blank">
-                            <i class="fab fa-telegram"></i>
-                            <span>Заказать через Telegram</span>
-                        </a>
+                        <span>{% trans "Консультация по телефону" %}</span>
                     </div>
                 </div>
             </div>
@@ -132,16 +138,16 @@
 <section class="product-tabs">
     <div class="container">
         <div class="tabs">
-            <button class="tab-btn active" data-tab="description">Описание</button>
-            <button class="tab-btn" data-tab="specifications">Характеристики</button>
+            <button class="tab-btn active" data-tab="description">{% trans "Описание" %}</button>
+            <button class="tab-btn" data-tab="specifications">{% trans "Характеристики" %}</button>
             {% if reviews %}
-            <button class="tab-btn" data-tab="reviews">Отзывы</button>
+            <button class="tab-btn" data-tab="reviews">{% trans "Отзывы" %}</button>
             {% endif %}
         </div>
         
         <div class="tab-content">
             <div class="tab-panel active" id="description">
-                <h3>Описание товара</h3>
+                <h3>{% trans "Описание товара" %}</h3>
                 <p>{{ product.description }}</p>
                 {% if product.short_description %}
                 <p>{{ product.short_description }}</p>
@@ -149,42 +155,42 @@
             </div>
             
             <div class="tab-panel" id="specifications">
-                <h3>Характеристики</h3>
+                <h3>{% trans "Характеристики" %}</h3>
                 <table class="specifications-table">
                     {% if product.material %}
                     <tr>
-                        <td>Материал</td>
+                        <td>{% trans "Материал" %}</td>
                         <td>{{ product.material }}</td>
                     </tr>
                     {% endif %}
                     <tr>
-                        <td>Страна производства</td>
+                        <td>{% trans "Страна производства" %}</td>
                         <td>{{ product.country }}</td>
                     </tr>
                     {% if product.care_instructions %}
                     <tr>
-                        <td>Уход</td>
+                        <td>{% trans "Уход" %}</td>
                         <td>{{ product.care_instructions }}</td>
                     </tr>
                     {% endif %}
                     {% if product.available_colors_list %}
                     <tr>
-                        <td>Цвета</td>
+                        <td>{% trans "Цвета" %}</td>
                         <td>{{ product.available_colors|title }}</td>
                     </tr>
                     {% endif %}
                     {% if product.available_sizes_list %}
                     <tr>
-                        <td>Размеры</td>
+                        <td>{% trans "Размеры" %}</td>
                         <td>{{ product.available_sizes }}</td>
                     </tr>
                     {% endif %}
                     <tr>
-                        <td>Пол</td>
+                        <td>{% trans "Пол" %}</td>
                         <td>{{ product.get_gender_display }}</td>
                     </tr>
                     <tr>
-                        <td>Категория</td>
+                        <td>{% trans "Категория" %}</td>
                         <td>{{ product.category.name }}</td>
                     </tr>
                 </table>
@@ -192,7 +198,7 @@
             
             {% if reviews %}
             <div class="tab-panel" id="reviews">
-                <h3>Отзывы покупателей</h3>
+                <h3>{% trans "Отзывы покупателей" %}</h3>
                 <div class="reviews-summary">
                     <div class="rating-overview">
                         <span class="rating-number">{{ avg_rating|floatformat:1 }}</span>
@@ -205,7 +211,7 @@
                                 {% endif %}
                             {% endfor %}
                         </div>
-                        <span class="reviews-count">на основе {{ reviews.count }} отзывов</span>
+                        <span class="reviews-count">{% trans "на основе" %} {{ reviews.count }} {% trans "отзывов" %}</span>
                     </div>
                 </div>
                 
@@ -241,7 +247,7 @@
 {% if related_products %}
 <section class="related-products">
     <div class="container">
-        <h2 class="section-title">Похожие товары</h2>
+        <h2 class="section-title">{% trans "Похожие товары" %}</h2>
         <div class="products-grid">
             {% for product in related_products %}
             <div class="product-card">
@@ -254,7 +260,7 @@
                         </div>
                     {% endif %}
                     <div class="product-overlay">
-                        <a href="{% url 'shop:product_detail' product.slug %}" class="quick-view-btn">Подробнее</a>
+                        <a href="{% url 'shop:product_detail' product.slug %}" class="quick-view-btn">{% trans "Подробнее" %}</a>
                     </div>
                 </div>
                 <div class="product-info">
@@ -265,7 +271,7 @@
                             <span class="old-price">{{ product.old_price|floatformat:0 }} ₽</span>
                         {% endif %}
                     </div>
-                    <a href="{% url 'shop:product_detail' product.slug %}" class="view-btn">Подробнее</a>
+                    <a href="{% url 'shop:product_detail' product.slug %}" class="view-btn">{% trans "Подробнее" %}</a>
                 </div>
             </div>
             {% endfor %}

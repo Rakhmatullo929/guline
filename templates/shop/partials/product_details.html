@@ -1,0 +1,111 @@
+{% load static %}
+{% load i18n %}
+
+<!-- Product Details Modal -->
+<div class="product-details-modal">
+    <div class="modal-header">
+        <h2>{{ product.name }}</h2>
+        <button class="close-modal" onclick="closeQuickView()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <div class="modal-content">
+        <div class="product-images">
+            <div class="main-image">
+                {% if product.main_image %}
+                    <img src="{{ product.main_image.url }}" alt="{{ product.name }}" id="main-product-image">
+                {% else %}
+                    <div class="product-placeholder">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                {% endif %}
+            </div>
+            {% if images %}
+                <div class="thumbnail-images">
+                    {% for image in images %}
+                        <img src="{{ image.image.url }}" 
+                             alt="{{ image.alt_text|default:product.name }}"
+                             onclick="changeMainImage(this.src)"
+                             class="thumbnail">
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="product-details">
+            <div class="product-price">
+                {% if product.old_price %}
+                    <span class="old-price">{{ product.old_price }} ₽</span>
+                {% endif %}
+                <span class="current-price">{{ product.price }} ₽</span>
+                {% if product.discount_percentage > 0 %}
+                    <span class="discount-badge">-{{ product.discount_percentage }}%</span>
+                {% endif %}
+            </div>
+            
+            <div class="product-rating">
+                {% if avg_rating > 0 %}
+                    <div class="stars">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= avg_rating %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="far fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                        <span class="rating-text">({{ reviews|length }} {% trans "отзывов" %})</span>
+                    </div>
+                {% else %}
+                    <span class="no-rating">{% trans "Нет оценок" %}</span>
+                {% endif %}
+            </div>
+            
+            <div class="product-description">
+                <p>{{ product.short_description|default:product.description|truncatewords:30 }}</p>
+            </div>
+            
+            <div class="product-attributes">
+                <div class="attribute">
+                    <strong>{% trans "Категория" %}:</strong>
+                    <span>{{ product.category.name }}</span>
+                </div>
+                <div class="attribute">
+                    <strong>{% trans "Пол" %}:</strong>
+                    <span>{{ product.get_gender_display }}</span>
+                </div>
+                {% if product.material %}
+                    <div class="attribute">
+                        <strong>{% trans "Материал" %}:</strong>
+                        <span>{{ product.material }}</span>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="product-actions">
+                <a href="https://t.me/z_gulinigor01" 
+                   class="telegram-order-btn primary" 
+                   target="_blank"
+                   onclick="sendTelegramMessage('{{ product.name }}', '{{ product.price }}')">
+                    <i class="fab fa-telegram"></i>
+                    {% trans "Заказать в Telegram" %}
+                </a>
+                <button class="view-details-btn" 
+                        onclick="window.location.href='{% url 'shop:product_detail' product.slug %}'">
+                    <i class="fas fa-eye"></i>
+                    {% trans "Подробнее" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function changeMainImage(src) {
+    document.getElementById('main-product-image').src = src;
+}
+
+function closeQuickView() {
+    document.getElementById('quick-view-modal').style.display = 'none';
+}
+</script>

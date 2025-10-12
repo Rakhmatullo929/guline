@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 from .models import (
     Category, Product, ProductImage, Review, 
-    Cart, Order, OrderItem, Contact
+    Contact
 )
 
 
@@ -37,25 +38,25 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImageInline]
     
     fieldsets = (
-        ('Основная информация', {
+        (_('Основная информация'), {
             'fields': ('name', 'slug', 'description', 'short_description', 'category', 'gender')
         }),
-        ('Цены', {
+        (_('Цены'), {
             'fields': ('price', 'old_price', 'discount_percentage')
         }),
-        ('Изображения', {
+        (_('Изображения'), {
             'fields': ('main_image',)
         }),
-        ('Характеристики', {
+        (_('Характеристики'), {
             'fields': ('material', 'country', 'care_instructions')
         }),
-        ('Размеры и цвета', {
+        (_('Размеры и цвета'), {
             'fields': ('available_sizes', 'available_colors')
         }),
-        ('Статус и склад', {
+        (_('Статус и склад'), {
             'fields': ('is_active', 'is_featured', 'stock_quantity')
         }),
-        ('Метаданные', {
+        (_('Метаданные'), {
             'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
@@ -68,54 +69,6 @@ class ReviewAdmin(admin.ModelAdmin):
     list_filter = ['rating', 'is_approved', 'created_at']
     search_fields = ['product__name', 'user__username', 'title', 'text']
     readonly_fields = ['created_at']
-
-
-@admin.register(Cart)
-class CartAdmin(admin.ModelAdmin):
-    list_display = ['user', 'product', 'quantity', 'size', 'color', 'total_price', 'created_at']
-    list_filter = ['created_at', 'updated_at']
-    search_fields = ['user__username', 'product__name']
-    readonly_fields = ['created_at', 'updated_at', 'total_price']
-
-
-class OrderItemInline(admin.TabularInline):
-    model = OrderItem
-    extra = 0
-    readonly_fields = ['total_price']
-
-
-@admin.register(Order)
-class OrderAdmin(admin.ModelAdmin):
-    list_display = [
-        'order_number', 'user', 'status', 'payment_method', 
-        'total', 'created_at'
-    ]
-    list_filter = ['status', 'payment_method', 'created_at']
-    search_fields = ['order_number', 'user__username', 'phone', 'email']
-    readonly_fields = ['order_number', 'created_at', 'updated_at']
-    inlines = [OrderItemInline]
-    
-    fieldsets = (
-        ('Основная информация', {
-            'fields': ('order_number', 'user', 'status', 'payment_method')
-        }),
-        ('Контактная информация', {
-            'fields': ('phone', 'email')
-        }),
-        ('Адрес доставки', {
-            'fields': ('address', 'city', 'postal_code')
-        }),
-        ('Стоимость', {
-            'fields': ('subtotal', 'shipping_cost', 'total')
-        }),
-        ('Комментарии', {
-            'fields': ('notes',)
-        }),
-        ('Метаданные', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
 
 
 @admin.register(Contact)
