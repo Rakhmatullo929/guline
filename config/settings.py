@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "modeltranslation",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -149,6 +150,11 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+
+# Modeltranslation settings
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'ru'
+MODELTRANSLATION_LANGUAGES = ('ru', 'en', 'uz')
+MODELTRANSLATION_FALLBACK_LANGUAGES = ('ru', 'en')
 
 try:
     from .settings_dev import *

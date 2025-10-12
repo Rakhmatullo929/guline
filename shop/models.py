@@ -3,9 +3,11 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from django.utils import translation
+from .utils import TranslationMixin
 
 
-class Category(models.Model):
+class Category(TranslationMixin, models.Model):
     """Модель категории товаров"""
     name = models.CharField(max_length=100, verbose_name=_("Название"))
     slug = models.SlugField(max_length=100, unique=True, verbose_name=_("URL"))
@@ -28,8 +30,22 @@ class Category(models.Model):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
+    def get_translated_name(self, language=None):
+        """Получить переведенное название категории"""
+        if language:
+            with translation.override(language):
+                return getattr(self, f'name_{language}', self.name)
+        return getattr(self, f'name_{translation.get_language()}', self.name)
 
-class Product(models.Model):
+    def get_translated_description(self, language=None):
+        """Получить переведенное описание категории"""
+        if language:
+            with translation.override(language):
+                return getattr(self, f'description_{language}', self.description)
+        return getattr(self, f'description_{translation.get_language()}', self.description)
+
+
+class Product(TranslationMixin, models.Model):
     """Модель товара"""
     SIZE_CHOICES = [
         ('XS', 'XS'),
@@ -109,6 +125,41 @@ class Product(models.Model):
         """Возвращает список доступных цветов"""
         return [color.strip() for color in self.available_colors.split(',')]
 
+    def get_translated_name(self, language=None):
+        """Получить переведенное название товара"""
+        if language:
+            with translation.override(language):
+                return getattr(self, f'name_{language}', self.name)
+        return getattr(self, f'name_{translation.get_language()}', self.name)
+
+    def get_translated_description(self, language=None):
+        """Получить переведенное описание товара"""
+        if language:
+            with translation.override(language):
+                return getattr(self, f'description_{language}', self.description)
+        return getattr(self, f'description_{translation.get_language()}', self.description)
+
+    def get_translated_short_description(self, language=None):
+        """Получить переведенное краткое описание товара"""
+        if language:
+            with translation.override(language):
+                return getattr(self, f'short_description_{language}', self.short_description)
+        return getattr(self, f'short_description_{translation.get_language()}', self.short_description)
+
+    def get_translated_material(self, language=None):
+        """Получить переведенный материал товара"""
+        if language:
+            with translation.override(language):
+                return getattr(self, f'material_{language}', self.material)
+        return getattr(self, f'material_{translation.get_language()}', self.material)
+
+    def get_translated_care_instructions(self, language=None):
+        """Получить переведенные инструкции по уходу"""
+        if language:
+            with translation.override(language):
+                return getattr(self, f'care_instructions_{language}', self.care_instructions)
+        return getattr(self, f'care_instructions_{translation.get_language()}', self.care_instructions)
+
 
 class ProductImage(models.Model):
     """Модель дополнительных изображений товара"""
@@ -127,7 +178,7 @@ class ProductImage(models.Model):
         return f"{self.product.name} - Изображение {self.order}"
 
 
-class Review(models.Model):
+class Review(TranslationMixin, models.Model):
     """Модель отзыва о товаре"""
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews', verbose_name=_("Товар"))
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("Пользователь"))
@@ -148,8 +199,22 @@ class Review(models.Model):
     def __str__(self):
         return f"{self.product.name} - {self.user.username} ({self.rating}/5)"
 
+    def get_translated_title(self, language=None):
+        """Получить переведенный заголовок отзыва"""
+        if language:
+            with translation.override(language):
+                return getattr(self, f'title_{language}', self.title)
+        return getattr(self, f'title_{translation.get_language()}', self.title)
 
-class Contact(models.Model):
+    def get_translated_text(self, language=None):
+        """Получить переведенный текст отзыва"""
+        if language:
+            with translation.override(language):
+                return getattr(self, f'text_{language}', self.text)
+        return getattr(self, f'text_{translation.get_language()}', self.text)
+
+
+class Contact(TranslationMixin, models.Model):
     """Модель контактной информации"""
     name = models.CharField(max_length=100, verbose_name=_("Название"))
     phone = models.CharField(max_length=20, verbose_name=_("Телефон"))
@@ -164,3 +229,24 @@ class Contact(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_translated_name(self, language=None):
+        """Получить переведенное название контакта"""
+        if language:
+            with translation.override(language):
+                return getattr(self, f'name_{language}', self.name)
+        return getattr(self, f'name_{translation.get_language()}', self.name)
+
+    def get_translated_address(self, language=None):
+        """Получить переведенный адрес"""
+        if language:
+            with translation.override(language):
+                return getattr(self, f'address_{language}', self.address)
+        return getattr(self, f'address_{translation.get_language()}', self.address)
+
+    def get_translated_working_hours(self, language=None):
+        """Получить переведенные часы работы"""
+        if language:
+            with translation.override(language):
+                return getattr(self, f'working_hours_{language}', self.working_hours)
+        return getattr(self, f'working_hours_{translation.get_language()}', self.working_hours)
