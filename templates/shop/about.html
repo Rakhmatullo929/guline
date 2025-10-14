@@ -1,5 +1,5 @@
 {% extends 'shop/base.html' %}
-
+{% load static %}
 {% block title %}О нас - GULINE{% endblock %}
 
 {% block content %}
@@ -24,7 +24,7 @@
             </div>
             <div class="about-image">
                 <div class="image-placeholder">
-                    <i class="fas fa-store"></i>
+                    <img src="{% static 'images/louis.jpg' %}" alt="">
                 </div>
             </div>
         </div>
