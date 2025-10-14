@@ -1617,12 +1617,12 @@
     background: #ff4757 !important;
     color: white !important;
     padding: 0.25rem 0.5rem !important;
-    border-radius: 4px !important;
+    border-radius: 8px !important;
     font-size: 0.8rem !important;
     font-weight: 600 !important;
     position: absolute !important;
-    top: 50px !important;
-    right: 10px !important;
+    top: 8px !important;
+    right: 8px !important;
     z-index: 5 !important;
 }
 
