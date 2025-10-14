@@ -18,18 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.conf.urls.i18n import i18n_patterns
-from shop.views import set_language
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("set-language/", set_language, name="set_language"),
-]
-
-# Добавляем языковые префиксы для основных URL
-urlpatterns += i18n_patterns(
     path("", include("shop.urls")),
-)
+]
 
 # Добавляем обработку медиа файлов в режиме разработки
 if settings.DEBUG:

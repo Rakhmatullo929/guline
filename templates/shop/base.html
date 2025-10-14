@@ -1,11 +1,10 @@
 {% load static %}
-{% load i18n %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}GULINE - {% trans "Модная одежда" %}{% endblock %}</title>
+    <title>{% block title %}GULINE - Модная одежда{% endblock %}</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
@@ -54,59 +53,37 @@
                 <li class="sidebar-item">
                     <a href="{% url 'shop:home' %}" class="sidebar-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
                         <i class="fas fa-home"></i>
-                        <span>{% trans "Главная" %}</span>
+                        <span>Главная</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
                     <a href="{% url 'shop:catalog' %}" class="sidebar-link {% if request.resolver_match.url_name == 'catalog' %}active{% endif %}">
                         <i class="fas fa-th-large"></i>
-                        <span>{% trans "Каталог" %}</span>
+                        <span>Каталог</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
                     <a href="{% url 'shop:favorites' %}" class="sidebar-link favorites-link {% if request.resolver_match.url_name == 'favorites' %}active{% endif %}">
                         <i class="fas fa-heart"></i>
-                        <span>{% trans "Избранное" %}</span>
-                        <span class="favorites-counter" style="display: none;">0</span>
+                        <span>Избранное</span>
+                        <span class="favorites-counter">0</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
                     <a href="{% url 'shop:about' %}" class="sidebar-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
                         <i class="fas fa-info-circle"></i>
-                        <span>{% trans "О нас" %}</span>
+                        <span>О нас</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
                     <a href="{% url 'shop:contact' %}" class="sidebar-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
                         <i class="fas fa-envelope"></i>
-                        <span>{% trans "Контакты" %}</span>
+                        <span>Контакты</span>
                     </a>
                 </li>
             </ul>
         </nav>
         
-        <!-- Language Switcher -->
-        <div class="language-switcher">
-            <h4>{% trans "Язык" %}</h4>
-            <div class="language-flags">
-                {% get_current_language as LANGUAGE_CODE %}
-                <a href="{% url 'set_language' %}?lang=ru&next={{ request.get_full_path|urlencode }}" 
-                   class="language-flag {% if LANGUAGE_CODE == 'ru' %}active{% endif %}" 
-                   title="Русский">
-                    <span class="flag-icon">🇷🇺</span>
-                </a>
-                <a href="{% url 'set_language' %}?lang=en&next={{ request.get_full_path|urlencode }}" 
-                   class="language-flag {% if LANGUAGE_CODE == 'en' %}active{% endif %}" 
-                   title="English">
-                    <span class="flag-icon">🇺🇸</span>
-                </a>
-                <a href="{% url 'set_language' %}?lang=uz&next={{ request.get_full_path|urlencode }}" 
-                   class="language-flag {% if LANGUAGE_CODE == 'uz' %}active{% endif %}" 
-                   title="O'zbek">
-                    <span class="flag-icon">🇺🇿</span>
-                </a>
-            </div>
-        </div>
         
         <div class="sidebar-footer">
             <div class="sidebar-social">
@@ -160,7 +137,7 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h4>GULINE</h4>
-                    <p>{% trans "Современная мода для стильных людей" %}</p>
+                    <p>Современная мода для стильных людей</p>
                     <div class="sidebar-social">
                         <a href="#" class="social-link instagram">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -175,30 +152,30 @@
                     </div>
                 </div>
                 <div class="footer-section">
-                    <h4>{% trans "Каталог" %}</h4>
+                    <h4>Каталог</h4>
                     <ul>
-                        <li><a href="{% url 'shop:catalog' %}?gender=men">{% trans "Мужская одежда" %}</a></li>
-                        <li><a href="{% url 'shop:catalog' %}?gender=women">{% trans "Женская одежда" %}</a></li>
-                        <li><a href="{% url 'shop:catalog' %}?gender=kids">{% trans "Детская одежда" %}</a></li>
+                        <li><a href="{% url 'shop:catalog' %}?gender=men">Мужская одежда</a></li>
+                        <li><a href="{% url 'shop:catalog' %}?gender=women">Женская одежда</a></li>
+                        <li><a href="{% url 'shop:catalog' %}?gender=kids">Детская одежда</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>{% trans "Информация" %}</h4>
+                    <h4>Информация</h4>
                     <ul>
-                        <li><a href="{% url 'shop:about' %}">{% trans "О нас" %}</a></li>
-                        <li><a href="{% url 'shop:contact' %}">{% trans "Контакты" %}</a></li>
-                        <li><a href="#">{% trans "Доставка и оплата" %}</a></li>
-                        <li><a href="#">{% trans "Возврат и обмен" %}</a></li>
+                        <li><a href="{% url 'shop:about' %}">О нас</a></li>
+                        <li><a href="{% url 'shop:contact' %}">Контакты</a></li>
+                        <li><a href="#">Доставка и оплата</a></li>
+                        <li><a href="#">Возврат и обмен</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>{% trans "Контакты" %}</h4>
+                    <h4>Контакты</h4>
                     <p><i class="fas fa-phone"></i> +998 91 411 11 44</p>
                     <p><i class="fas fa-envelope"></i> info@guline.ru</p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 GULINE. {% trans "Все права защищены" %}.</p>
+                <p>&copy; 2025 GULINE. Все права защищены.</p>
             </div>
         </div>
     </footer>

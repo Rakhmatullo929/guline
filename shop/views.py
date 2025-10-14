@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from django.db.models import Q, Avg
-from django.utils import translation
 from django.conf import settings
 from django.http import JsonResponse
 from django.template.loader import render_to_string
@@ -16,16 +15,13 @@ from .models import (
 def home(request):
     """Главная страница"""
     # Получаем рекомендуемые товары
-    featured_products = Product.objects.filter(
-        is_active=True, 
-        is_featured=True
-    )[:8]
+    featured_products = Product.objects.all()[:8]
     
     # Получаем категории
     categories = Category.objects.filter(is_active=True)[:3]
     
     # Получаем последние товары
-    latest_products = Product.objects.filter(is_active=True)[:8]
+    latest_products = Product.objects.all()[:8]
     
     context = {
         'featured_products': featured_products,
@@ -36,8 +32,9 @@ def home(request):
 
 
 def catalog(request):
-    """Страница каталога"""
-    products = Product.objects.filter(is_active=True)
+    """Страница каталога с фильтрацией по категориям и полу"""
+    products = Product.objects.all()
+    categories = Category.objects.filter(is_active=True)
     
     # Фильтрация по категории
     category_slug = request.GET.get('category')
@@ -72,27 +69,40 @@ def catalog(request):
         products = products.order_by('name')
     
     # Пагинация
-    paginator = Paginator(products, 12)
+    page_size = int(request.GET.get('page_size', 12))
+    paginator = Paginator(products, page_size)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    # Получаем все категории для фильтров
-    categories = Category.objects.filter(is_active=True)
+    # Формируем query_params для пагинации
+    query_params = ''
+    if category_slug:
+        query_params += f'&category={category_slug}'
+    if gender:
+        query_params += f'&gender={gender}'
+    if search_query:
+        query_params += f'&search={search_query}'
+    if sort_by and sort_by != 'name':
+        query_params += f'&sort={sort_by}'
+    if page_size != 12:
+        query_params += f'&page_size={page_size}'
     
     context = {
         'products': page_obj,
+        'page_obj': page_obj,
         'categories': categories,
         'current_category': category,
         'current_gender': gender,
         'search_query': search_query,
         'sort_by': sort_by,
+        'query_params': query_params,
     }
     return render(request, 'shop/catalog.html', context)
 
 
 def product_detail(request, slug):
     """Страница товара"""
-    product = get_object_or_404(Product, slug=slug, is_active=True)
+    product = get_object_or_404(Product, slug=slug)
     
     # Получаем дополнительные изображения
     images = product.images.all().order_by('order')
@@ -105,8 +115,7 @@ def product_detail(request, slug):
     
     # Получаем похожие товары
     related_products = Product.objects.filter(
-        category=product.category,
-        is_active=True
+        category=product.category
     ).exclude(id=product.id)[:4]
     
     context = {
@@ -135,41 +144,12 @@ def contact(request):
     return render(request, 'shop/contact.html', context)
 
 
-def set_language(request):
-    """Переключение языка"""
-    from django.urls import reverse
-    from django.utils.translation import get_language
-    import re
-    
-    lang_code = request.GET.get('lang')
-    if lang_code and lang_code in [lang[0] for lang in settings.LANGUAGES]:
-        translation.activate(lang_code)
-        request.session['django_language'] = lang_code
-        
-        # Получаем URL для перенаправления
-        next_url = request.GET.get('next')
-        if next_url:
-            # Убираем текущий языковой префикс и добавляем новый
-            # Убираем префиксы типа /ru/, /en/, /uz/
-            next_url = re.sub(r'^/[a-z]{2}/', '/', next_url)
-            # Добавляем новый языковой префикс
-            next_url = f'/{lang_code}{next_url}'
-        else:
-            # Если нет next параметра, перенаправляем на главную страницу с языковым префиксом
-            next_url = f'/{lang_code}/'
-        
-        response = redirect(next_url)
-        response.set_cookie('django_language', lang_code)
-        return response
-    
-    # Если язык не найден, перенаправляем на главную
-    return redirect('/')
 
 
 # HTMX Views
 def htmx_catalog_filter(request):
     """HTMX представление для фильтрации каталога"""
-    products = Product.objects.filter(is_active=True)
+    products = Product.objects.all()
     
     # Фильтрация по категории
     category_slug = request.GET.get('category')
@@ -204,16 +184,40 @@ def htmx_catalog_filter(request):
         products = products.order_by('name')
     
     # Пагинация
-    paginator = Paginator(products, 12)
+    page_size = int(request.GET.get('page_size', 12))
+    paginator = Paginator(products, page_size)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
+    # Фильтрация по множественным категориям
+    categories = request.GET.get('categories')
+    if categories:
+        category_ids = categories.split(',')
+        products = products.filter(category_id__in=category_ids)
+    
+    # Формируем query_params для пагинации
+    query_params = ''
+    if category_slug:
+        query_params += f'&category={category_slug}'
+    if categories:
+        query_params += f'&categories={categories}'
+    if gender:
+        query_params += f'&gender={gender}'
+    if search_query:
+        query_params += f'&search={search_query}'
+    if sort_by and sort_by != 'name':
+        query_params += f'&sort={sort_by}'
+    if page_size != 12:
+        query_params += f'&page_size={page_size}'
+    
     context = {
         'products': page_obj,
+        'page_obj': page_obj,
         'current_category': category,
         'current_gender': gender,
         'search_query': search_query,
         'sort_by': sort_by,
+        'query_params': query_params,
     }
     
     # Если это HTMX запрос, возвращаем только HTML
@@ -232,8 +236,7 @@ def htmx_product_search(request):
     
     products = Product.objects.filter(
         Q(name__icontains=search_query) | 
-        Q(description__icontains=search_query),
-        is_active=True
+        Q(description__icontains=search_query)
     )[:8]
     
     context = {
@@ -246,7 +249,7 @@ def htmx_product_search(request):
 
 def htmx_product_details(request, slug):
     """HTMX представление для детальной информации о товаре"""
-    product = get_object_or_404(Product, slug=slug, is_active=True)
+    product = get_object_or_404(Product, slug=slug)
     
     # Получаем дополнительные изображения
     images = product.images.all().order_by('order')
@@ -280,7 +283,7 @@ def htmx_load_more_products(request):
     category_slug = request.GET.get('category')
     gender = request.GET.get('gender')
     
-    products = Product.objects.filter(is_active=True)
+    products = Product.objects.all()
     
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug, is_active=True)
@@ -304,7 +307,7 @@ def htmx_load_more_products(request):
 
 def htmx_toggle_favorite(request, product_id):
     """HTMX представление для добавления/удаления из избранного"""
-    product = get_object_or_404(Product, id=product_id, is_active=True)
+    product = get_object_or_404(Product, id=product_id)
     
     # Получаем список избранных товаров из localStorage (передается через JavaScript)
     favorites_data = request.POST.get('favorites', '[]')
@@ -314,7 +317,7 @@ def htmx_toggle_favorite(request, product_id):
         favorites = []
     
     # Определяем текущий статус
-    is_favorite = product_id in favorites
+    is_favorite = str(product_id) in favorites
     
     context = {
         'product': product,
@@ -335,8 +338,7 @@ def favorites_page(request):
     
     # Получаем товары из базы данных
     products = Product.objects.filter(
-        id__in=favorites,
-        is_active=True
+        id__in=favorites
     ).order_by('-created_at')
     
     context = {
@@ -357,8 +359,7 @@ def api_favorites_data(request):
             
             # Получаем товары из базы данных
             products = Product.objects.filter(
-                id__in=product_ids,
-                is_active=True
+                id__in=product_ids
             )
             
             # Формируем данные для ответа

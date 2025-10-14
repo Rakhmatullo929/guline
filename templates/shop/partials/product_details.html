@@ -1,5 +1,4 @@
 {% load static %}
-{% load i18n %}
 
 <!-- Product Details Modal -->
 <div class="product-details-modal">
@@ -44,22 +43,6 @@
                 {% endif %}
             </div>
             
-            <div class="product-rating">
-                {% if avg_rating > 0 %}
-                    <div class="stars">
-                        {% for i in "12345" %}
-                            {% if forloop.counter <= avg_rating %}
-                                <i class="fas fa-star"></i>
-                            {% else %}
-                                <i class="far fa-star"></i>
-                            {% endif %}
-                        {% endfor %}
-                        <span class="rating-text">({{ reviews|length }} {% trans "отзывов" %})</span>
-                    </div>
-                {% else %}
-                    <span class="no-rating">{% trans "Нет оценок" %}</span>
-                {% endif %}
-            </div>
             
             <div class="product-description">
                 <p>{{ product.short_description|default:product.description|truncatewords:30 }}</p>
@@ -67,16 +50,16 @@
             
             <div class="product-attributes">
                 <div class="attribute">
-                    <strong>{% trans "Категория" %}:</strong>
+                    <strong>Категория:</strong>
                     <span>{{ product.category.name }}</span>
                 </div>
                 <div class="attribute">
-                    <strong>{% trans "Пол" %}:</strong>
+                    <strong>Пол:</strong>
                     <span>{{ product.get_gender_display }}</span>
                 </div>
                 {% if product.material %}
                     <div class="attribute">
-                        <strong>{% trans "Материал" %}:</strong>
+                        <strong>Материал:</strong>
                         <span>{{ product.material }}</span>
                     </div>
                 {% endif %}
@@ -88,12 +71,12 @@
                    target="_blank"
                    onclick="sendTelegramMessage('{{ product.name }}', '{{ product.price }}')">
                     <i class="fab fa-telegram"></i>
-                    {% trans "Заказать в Telegram" %}
+                    Заказать в Telegram
                 </a>
                 <button class="view-details-btn" 
                         onclick="window.location.href='{% url 'shop:product_detail' product.slug %}'">
                     <i class="fas fa-eye"></i>
-                    {% trans "Подробнее" %}
+                    Подробнее
                 </button>
             </div>
         </div>

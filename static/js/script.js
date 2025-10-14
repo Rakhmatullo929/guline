@@ -401,3 +401,91 @@ if (document.readyState === 'loading') {
         console.error('Error initializing SidebarManager (fallback):', error);
     }
 }
+
+// Enhanced Video Handling
+class VideoManager {
+    constructor() {
+        this.videos = document.querySelectorAll('.hero-video');
+        this.init();
+    }
+
+    init() {
+        this.videos.forEach(video => {
+            this.setupVideo(video);
+        });
+    }
+
+    setupVideo(video) {
+        // Handle video load errors
+        video.addEventListener('error', (e) => {
+            console.warn('Video failed to load:', e);
+            this.showFallback(video);
+        });
+
+        // Handle video load success
+        video.addEventListener('loadeddata', () => {
+            console.log('Video loaded successfully');
+            this.hideFallback(video);
+        });
+
+        // Handle video can't play
+        video.addEventListener('canplay', () => {
+            console.log('Video can play');
+            this.hideFallback(video);
+        });
+
+        // Handle video can't play through
+        video.addEventListener('canplaythrough', () => {
+            console.log('Video can play through');
+            this.hideFallback(video);
+        });
+
+        // Try to play video
+        this.attemptPlay(video);
+    }
+
+    attemptPlay(video) {
+        const playPromise = video.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                console.log('Video started playing');
+                this.hideFallback(video);
+            }).catch(error => {
+                console.warn('Video play failed:', error);
+                this.showFallback(video);
+            });
+        }
+    }
+
+    showFallback(video) {
+        const container = video.closest('.hero-video-container');
+        if (container) {
+            const fallback = container.querySelector('.video-fallback');
+            if (fallback) {
+                fallback.style.display = 'flex';
+            }
+        }
+    }
+
+    hideFallback(video) {
+        const container = video.closest('.hero-video-container');
+        if (container) {
+            const fallback = container.querySelector('.video-fallback');
+            if (fallback) {
+                fallback.style.display = 'none';
+            }
+        }
+    }
+}
+
+// Initialize video manager when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing VideoManager...');
+    try {
+        window.videoManager = new VideoManager();
+        console.log('VideoManager initialized successfully');
+    } catch (error) {
+        console.error('Error initializing VideoManager:', error);
+    }
+});

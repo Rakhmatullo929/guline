@@ -1,327 +1,255 @@
-// Updated catalog.js - Removed cart functionality, kept filtering and search
+// Catalog JavaScript with Advanced Filtering
 
-let currentCategory = 'all';
-let currentSort = 'name';
-let searchQuery = '';
-
-// Initialize catalog
 document.addEventListener('DOMContentLoaded', function() {
     initCatalogFilters();
-    initSearch();
-    initSorting();
-    loadProductsFromURL();
+    initFavorites();
+    initPagination();
 });
 
-// Initialize catalog filters
 function initCatalogFilters() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
+    const filtersForm = document.getElementById('catalog-filters');
     
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Remove active class from all buttons
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            
-            // Add active class to clicked button
-            this.classList.add('active');
-            
-            // Update current category
-            currentCategory = this.dataset.category;
-            
-            // Filter products
-            filterProducts();
-        });
-    });
-}
-
-// Initialize search functionality
-function initSearch() {
-    const searchInput = document.querySelector('.search-input');
+    if (!filtersForm) return;
     
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            searchQuery = this.value.toLowerCase();
-            filterProducts();
-        });
-    }
-}
-
-// Initialize sorting
-function initSorting() {
-    const sortSelect = document.querySelector('.sort-select');
+    // Auto-submit on filter change
+    const filterInputs = filtersForm.querySelectorAll('select, input[type="text"]');
     
-    if (sortSelect) {
-        sortSelect.addEventListener('change', function() {
-            currentSort = this.value;
-            sortProducts();
-        });
-    }
-}
-
-// Load products from URL parameters
-function loadProductsFromURL() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const category = urlParams.get('category');
-    
-    if (category) {
-        currentCategory = category;
-        
-        // Update active filter button
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        filterButtons.forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.dataset.category === category) {
-                btn.classList.add('active');
+    filterInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            // Add small delay for search input
+            if (input.type === 'text') {
+                clearTimeout(input.searchTimeout);
+                input.searchTimeout = setTimeout(() => {
+                    submitFilters();
+                }, 500);
+            } else {
+                submitFilters();
             }
         });
         
-        filterProducts();
-    }
-}
-
-// Filter products based on category and search query
-function filterProducts() {
-    const products = document.querySelectorAll('.product-card');
-    let visibleCount = 0;
-    
-    products.forEach(product => {
-        const productCategory = product.dataset.category;
-        const productName = product.querySelector('.product-name').textContent.toLowerCase();
-        
-        const categoryMatch = currentCategory === 'all' || productCategory === currentCategory;
-        const searchMatch = searchQuery === '' || productName.includes(searchQuery);
-        
-        if (categoryMatch && searchMatch) {
-            product.style.display = 'block';
-            visibleCount++;
-        } else {
-            product.style.display = 'none';
+        // For search input, also handle Enter key
+        if (input.type === 'text') {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    clearTimeout(input.searchTimeout);
+                    submitFilters();
+                }
+            });
         }
     });
     
-    // Show "no products found" message if needed
-    showNoProductsMessage(visibleCount === 0);
-}
-
-// Show/hide "no products found" message
-function showNoProductsMessage(show) {
-    let noProductsMsg = document.getElementById('noProductsMsg');
-    
-    if (show && !noProductsMsg) {
-        noProductsMsg = document.createElement('div');
-        noProductsMsg.id = 'noProductsMsg';
-        noProductsMsg.className = 'no-products-message';
-        noProductsMsg.innerHTML = `
-            <div class="no-products-content">
-                <i class="fas fa-search"></i>
-                <h3>Товары не найдены</h3>
-                <p>Попробуйте изменить фильтры или поисковый запрос</p>
-            </div>
-        `;
-        
-        const productsGrid = document.getElementById('productsGrid');
-        if (productsGrid) {
-            productsGrid.appendChild(noProductsMsg);
-        }
-    } else if (!show && noProductsMsg) {
-        noProductsMsg.remove();
-    }
-}
-
-// Sort products
-function sortProducts() {
-    const productsGrid = document.getElementById('productsGrid');
-    if (!productsGrid) return;
-    
-    const products = Array.from(productsGrid.querySelectorAll('.product-card'));
-    
-    // Filter visible products only
-    const visibleProducts = products.filter(product => 
-        product.style.display !== 'none'
-    );
-    
-    visibleProducts.sort((a, b) => {
-        const nameA = a.querySelector('.product-name').textContent;
-        const nameB = b.querySelector('.product-name').textContent;
-        const priceA = parseInt(a.querySelector('.product-price .current-price').textContent.replace(/[^\d]/g, ''));
-        const priceB = parseInt(b.querySelector('.product-price .current-price').textContent.replace(/[^\d]/g, ''));
-        
-        switch (currentSort) {
-            case 'name':
-                return nameA.localeCompare(nameB);
-            case 'price-low':
-                return priceA - priceB;
-            case 'price-high':
-                return priceB - priceA;
-            case 'newest':
-                // For demo purposes, sort by product ID (higher ID = newer)
-                const idA = parseInt(a.querySelector('.view-btn').href.match(/\d+/)[0]) || 0;
-                const idB = parseInt(b.querySelector('.view-btn').href.match(/\d+/)[0]) || 0;
-                return idB - idA;
-            default:
-                return 0;
-        }
-    });
-    
-    // Re-append sorted products
-    visibleProducts.forEach(product => {
-        productsGrid.appendChild(product);
+    // Handle form submission
+    filtersForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        submitFilters();
     });
 }
 
-// Add CSS for catalog page
-const style = document.createElement('style');
-style.textContent = `
-    .no-products-message {
-        grid-column: 1 / -1;
-        text-align: center;
-        padding: 4rem 2rem;
-        color: #666;
+function submitFilters() {
+    const form = document.getElementById('catalog-filters');
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+    
+    // Build URL parameters
+    for (let [key, value] of formData.entries()) {
+        if (value.trim() !== '') {
+            params.set(key, value);
+        }
     }
     
-    .no-products-content i {
-        font-size: 4rem;
-        color: #ddd;
-        margin-bottom: 1rem;
+    // Remove page parameter to start from first page
+    params.delete('page');
+    
+    // Update URL and reload
+    const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+    window.location.href = newUrl;
+}
+
+function initFavorites() {
+    // Load favorites from localStorage
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    
+    // Update favorites data field
+    const favoritesData = document.getElementById('favorites-data');
+    if (favoritesData) {
+        favoritesData.value = JSON.stringify(favorites);
     }
     
-    .no-products-content h3 {
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-        color: #333;
+    // Add click handlers to favorite buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('favorite-btn') || e.target.closest('.favorite-btn')) {
+            e.preventDefault();
+            const btn = e.target.closest('.favorite-btn');
+            const productId = btn.dataset.productId;
+            
+            if (productId) {
+                toggleFavorite(productId, btn);
+            }
+        }
+    });
+}
+
+function toggleFavorite(productId, btn) {
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    const productIdStr = productId.toString();
+    
+    if (favorites.includes(productIdStr)) {
+        // Remove from favorites
+        favorites = favorites.filter(id => id !== productIdStr);
+        btn.classList.remove('active');
+        btn.innerHTML = '<i class="far fa-heart"></i>';
+    } else {
+        // Add to favorites
+        favorites.push(productIdStr);
+        btn.classList.add('active');
+        btn.innerHTML = '<i class="fas fa-heart"></i>';
     }
     
-    .no-products-content p {
-        color: #666;
+    // Save to localStorage
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    
+    // Update favorites data field
+    const favoritesData = document.getElementById('favorites-data');
+    if (favoritesData) {
+        favoritesData.value = JSON.stringify(favorites);
     }
     
-    .page-header {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        padding: 120px 0 60px;
-        text-align: center;
+    // Update favorites count in header if exists
+    updateFavoritesCount(favorites.length);
+}
+
+function updateFavoritesCount(count) {
+    const countElement = document.querySelector('.favorites-count');
+    if (countElement) {
+        countElement.textContent = count;
+    }
+}
+
+// Pagination functionality
+function initPagination() {
+    // Page size selector
+    const pageSizeSelect = document.getElementById('page-size');
+    if (pageSizeSelect) {
+        pageSizeSelect.addEventListener('change', function() {
+            const newPageSize = this.value;
+            updateURL({ page_size: newPageSize, page: 1 });
+        });
     }
     
-    .page-header h1 {
-        font-size: 3rem;
-        font-weight: 700;
-        color: #2c2c2c;
-        margin-bottom: 1rem;
+    // Page jump functionality
+    const pageJumpInput = document.getElementById('page-jump');
+    if (pageJumpInput) {
+        pageJumpInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                jumpToPage();
+            }
+        });
     }
+}
+
+function jumpToPage() {
+    const pageJumpInput = document.getElementById('page-jump');
+    const maxPages = parseInt(pageJumpInput.getAttribute('max'));
+    const targetPage = parseInt(pageJumpInput.value);
     
-    .page-header p {
-        font-size: 1.2rem;
-        color: #666;
+    if (targetPage >= 1 && targetPage <= maxPages) {
+        updateURL({ page: targetPage });
+    } else {
+        // Reset to current page if invalid
+        pageJumpInput.value = getCurrentPage();
+        showNotification('Неверный номер страницы', 'error');
     }
+}
+
+function getCurrentPage() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return parseInt(urlParams.get('page')) || 1;
+}
+
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
     
-    .filters-section {
-        background: white;
-        padding: 2rem 0;
-        border-bottom: 1px solid #eee;
-    }
-    
-    .filters-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        align-items: center;
-        justify-content: space-between;
-    }
-    
-    .search-box {
-        position: relative;
-        flex: 1;
-        min-width: 300px;
-    }
-    
-    .search-input {
-        width: 100%;
-        padding: 0.8rem 1rem 0.8rem 3rem;
-        border: 2px solid #eee;
-        border-radius: 25px;
-        font-size: 1rem;
-        transition: border-color 0.3s ease;
-    }
-    
-    .search-input:focus {
-        outline: none;
-        border-color: #7a7256;
-    }
-    
-    .search-box i {
-        position: absolute;
-        left: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #666;
-    }
-    
-    .filters {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-    
-    .filter-btn {
-        padding: 0.6rem 1.2rem;
-        border: 2px solid #eee;
-        background: white;
-        color: #666;
-        border-radius: 25px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-weight: 500;
-        text-decoration: none;
-    }
-    
-    .filter-btn:hover,
-    .filter-btn.active {
-        border-color: #7a7256;
-        background: #7a7256;
+    // Add styles
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'error' ? '#dc3545' : '#7a7256'};
         color: white;
-    }
-    
-    .sort-options {
-        min-width: 200px;
-    }
-    
-    .sort-select {
-        width: 100%;
-        padding: 0.8rem 1rem;
-        border: 2px solid #eee;
+        padding: 1rem 1.5rem;
         border-radius: 8px;
-        background: white;
-        color: #333;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: border-color 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1001;
+        animation: slideIn 0.3s ease;
+    `;
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// HTMX event handlers
+document.addEventListener('htmx:beforeRequest', function(event) {
+    // Show loading indicator
+    const loadingIndicator = document.getElementById('catalog-loading');
+    if (loadingIndicator) {
+        loadingIndicator.style.display = 'flex';
+    }
+});
+
+document.addEventListener('htmx:afterRequest', function(event) {
+    // Hide loading indicator
+    const loadingIndicator = document.getElementById('catalog-loading');
+    if (loadingIndicator) {
+        loadingIndicator.style.display = 'none';
     }
     
-    .sort-select:focus {
-        outline: none;
-        border-color: #7a7256;
+    // Update page jump input
+    const pageJumpInput = document.getElementById('page-jump');
+    if (pageJumpInput) {
+        pageJumpInput.value = getCurrentPage();
     }
     
-    .products-section {
-        padding: 3rem 0;
-        background: #fafafa;
+    // Scroll to top of products
+    const productGrid = document.getElementById('product-grid');
+    if (productGrid) {
+        productGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+});
+
+document.addEventListener('htmx:responseError', function(event) {
+    showNotification('Ошибка загрузки данных', 'error');
+});
+
+// Utility function to update URL parameters
+function updateURL(params) {
+    const url = new URL(window.location);
     
-    @media (max-width: 768px) {
-        .filters-container {
-            flex-direction: column;
-            align-items: stretch;
+    Object.keys(params).forEach(key => {
+        if (params[key] === null || params[key] === undefined || params[key] === '') {
+            url.searchParams.delete(key);
+        } else {
+            url.searchParams.set(key, params[key]);
         }
-        
-        .search-box {
-            min-width: auto;
-        }
-        
-        .filters {
-            justify-content: center;
-        }
-        
-        .page-header h1 {
-            font-size: 2rem;
-        }
-    }
-`;
-document.head.appendChild(style);
+    });
+    
+    window.location.href = url.toString();
+}

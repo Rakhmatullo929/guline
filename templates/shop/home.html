@@ -1,19 +1,38 @@
 {% extends 'shop/base.html' %}
-{% load i18n %}
+{% load static %}
 
-{% block title %}{% trans "Главная" %} - GULINE{% endblock %}
+{% block title %}Главная - GULINE{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
 <section class="hero">
     <div class="hero-content">
-        <h1 class="hero-title">{% trans "Новая коллекция" %}</h1>
-        <p class="hero-subtitle">{% trans "Современная мода для стильных людей" %}</p>
-        <a href="{% url 'shop:catalog' %}" class="hero-btn">{% trans "Смотреть коллекцию" %}</a>
+        <h1 class="hero-title">Новая коллекция</h1>
+        <p class="hero-subtitle">Современная мода для стильных людей</p>
+        <a href="{% url 'shop:catalog' %}" class="hero-btn">Смотреть коллекцию</a>
     </div>
     <div class="hero-image">
-        <div class="hero-placeholder">
-            <i class="fas fa-tshirt"></i>
+        <div class="hero-video-container">
+            <video 
+                class="hero-video" 
+                autoplay 
+                loop 
+                muted 
+                playsinline
+                preload="metadata"
+                aria-label="Презентационное видео коллекции GULINE">
+                <source src="{% static 'video/guline-video.mov' %}" type="video/mp4">
+                <source src="{% static 'video/guline-video.webm' %}" type="video/webm">
+                <!-- Fallback для браузеров, которые не поддерживают видео -->
+                <div class="video-fallback">
+                    <div class="fallback-content">
+                        <i class="fas fa-play-circle"></i>
+                        <p>Новая коллекция GULINE</p>
+                    </div>
+                </div>
+            </video>
+            <!-- Overlay для лучшего контраста текста -->
+            <div class="video-overlay"></div>
         </div>
     </div>
 </section>
@@ -21,7 +40,7 @@
 <!-- Featured Products -->
 <section class="featured-products">
     <div class="container">
-        <h2 class="section-title">{% trans "Популярные товары" %}</h2>
+        <h2 class="section-title">Популярные товары</h2>
         <div class="products-grid">
             {% for product in featured_products %}
             <div class="product-card" hx-boost="true">
@@ -41,15 +60,8 @@
                                 hx-post="{% url 'shop:htmx_toggle_favorite' product.id %}"
                                 hx-target="this"
                                 hx-swap="outerHTML"
-                                title="{% trans 'Добавить в избранное' %}">
+                                title="Добавить в избранное">
                             <i class="far fa-heart"></i>
-                        </button>
-                        <button class="action-btn quick-view-btn" 
-                                hx-get="{% url 'shop:htmx_product_details' product.slug %}"
-                                hx-target="#quick-view-modal"
-                                hx-swap="innerHTML"
-                                title="{% trans 'Быстрый просмотр' %}">
-                            <i class="fas fa-eye"></i>
                         </button>
                     </div>
                 </div>
@@ -63,29 +75,14 @@
                         {% endif %}
                         <span class="current-price">{{ product.price|floatformat:0 }} ₽</span>
                     </div>
-                    <div class="product-rating">
-                        {% if product.reviews.exists %}
-                            {% with avg_rating=product.reviews.all|length %}
-                                {% for i in "12345" %}
-                                    {% if forloop.counter <= avg_rating %}
-                                        <i class="fas fa-star"></i>
-                                    {% else %}
-                                        <i class="far fa-star"></i>
-                                    {% endif %}
-                                {% endfor %}
-                            {% endwith %}
-                        {% else %}
-                            <span class="no-rating">{% trans "Нет оценок" %}</span>
-                        {% endif %}
-                    </div>
                     <a href="{% url 'shop:product_detail' product.slug %}" class="view-btn">
-                        {% trans "Подробнее" %}
+                        Подробнее
                     </a>
                 </div>
             </div>
             {% empty %}
             <div class="no-products">
-                <p>{% trans "Популярные товары скоро появятся!" %}</p>
+                <p>Популярные товары скоро появятся!</p>
             </div>
             {% endfor %}
         </div>
@@ -95,7 +92,7 @@
 <!-- Categories -->
 <section class="categories">
     <div class="container">
-        <h2 class="section-title">{% trans "Категории" %}</h2>
+        <h2 class="section-title">Категории</h2>
         <div class="categories-grid">
             {% for category in categories %}
             <div class="category-card">
@@ -111,11 +108,11 @@
                     {% endif %}
                 </div>
                 <h3>{{ category.name }}</h3>
-                <a href="{% url 'shop:catalog' %}?category={{ category.slug }}" class="category-link">{% trans "Смотреть" %}</a>
+                <a href="{% url 'shop:catalog' %}?category={{ category.slug }}" class="category-link">Смотреть</a>
             </div>
             {% empty %}
             <div class="no-categories">
-                <p>{% trans "Категории скоро появятся!" %}</p>
+                <p>Категории скоро появятся!</p>
             </div>
             {% endfor %}
         </div>
@@ -126,7 +123,7 @@
 {% if latest_products %}
 <section class="latest-products">
     <div class="container">
-        <h2 class="section-title">{% trans "Новинки" %}</h2>
+        <h2 class="section-title">Новинки</h2>
         <div class="products-grid">
             {% for product in latest_products %}
             <div class="product-card" hx-boost="true">
@@ -146,15 +143,8 @@
                                 hx-post="{% url 'shop:htmx_toggle_favorite' product.id %}"
                                 hx-target="this"
                                 hx-swap="outerHTML"
-                                title="{% trans 'Добавить в избранное' %}">
+                                title="Добавить в избранное">
                             <i class="far fa-heart"></i>
-                        </button>
-                        <button class="action-btn quick-view-btn" 
-                                hx-get="{% url 'shop:htmx_product_details' product.slug %}"
-                                hx-target="#quick-view-modal"
-                                hx-swap="innerHTML"
-                                title="{% trans 'Быстрый просмотр' %}">
-                            <i class="fas fa-eye"></i>
                         </button>
                     </div>
                 </div>
@@ -168,23 +158,8 @@
                         {% endif %}
                         <span class="current-price">{{ product.price|floatformat:0 }} ₽</span>
                     </div>
-                    <div class="product-rating">
-                        {% if product.reviews.exists %}
-                            {% with avg_rating=product.reviews.all|length %}
-                                {% for i in "12345" %}
-                                    {% if forloop.counter <= avg_rating %}
-                                        <i class="fas fa-star"></i>
-                                    {% else %}
-                                        <i class="far fa-star"></i>
-                                    {% endif %}
-                                {% endfor %}
-                            {% endwith %}
-                        {% else %}
-                            <span class="no-rating">{% trans "Нет оценок" %}</span>
-                        {% endif %}
-                    </div>
                     <a href="{% url 'shop:product_detail' product.slug %}" class="view-btn">
-                        {% trans "Подробнее" %}
+                        Подробнее
                     </a>
                 </div>
             </div>
@@ -202,29 +177,29 @@
                 <div class="feature-icon">
                     <i class="fas fa-truck"></i>
                 </div>
-                <h3>{% trans "Быстрая доставка" %}</h3>
-                <p>{% trans "Доставляем по всей России в течение 3-7 дней" %}</p>
+                <h3>Быстрая доставка</h3>
+                <p>Доставляем по всей России в течение 3-7 дней</p>
             </div>
             <div class="feature-item">
                 <div class="feature-icon">
                     <i class="fas fa-shield-alt"></i>
                 </div>
-                <h3>{% trans "Гарантия качества" %}</h3>
-                <p>{% trans "Все товары проходят строгий контроль качества" %}</p>
+                <h3>Гарантия качества</h3>
+                <p>Все товары проходят строгий контроль качества</p>
             </div>
             <div class="feature-item">
                 <div class="feature-icon">
                     <i class="fas fa-undo"></i>
                 </div>
-                <h3>{% trans "Легкий возврат" %}</h3>
-                <p>{% trans "Возврат товара в течение 14 дней без вопросов" %}</p>
+                <h3>Легкий возврат</h3>
+                <p>Возврат товара в течение 14 дней без вопросов</p>
             </div>
             <div class="feature-item">
                 <div class="feature-icon">
                     <i class="fas fa-headset"></i>
                 </div>
-                <h3>{% trans "Поддержка 24/7" %}</h3>
-                <p>{% trans "Наша команда всегда готова помочь вам" %}</p>
+                <h3>Поддержка 24/7</h3>
+                <p>Наша команда всегда готова помочь вам</p>
             </div>
         </div>
     </div>

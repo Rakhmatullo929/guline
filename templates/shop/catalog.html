@@ -1,8 +1,7 @@
 {% extends 'shop/base.html' %}
 {% load static %}
-{% load i18n %}
 
-{% block title %}{% trans "Каталог" %} - GULINE{% endblock %}
+{% block title %}Каталог - GULINE{% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'js/catalog.js' %}"></script>
@@ -12,85 +11,98 @@
 <!-- Page Header -->
 <section class="page-header">
     <div class="container">
-        <h1>{% trans "Каталог товаров" %}</h1>
-        <p>{% trans "Найдите идеальную одежду для себя" %}</p>
+        <h1>Каталог товаров</h1>
+        <p>Найдите идеальную одежду для себя</p>
     </div>
 </section>
 
-<!-- Filters and Search -->
+<!-- Filters Section -->
 <section class="filters-section">
     <div class="container">
-        <div class="filters-container">
-            <form method="get" class="search-form">
-                <div class="search-box">
-                    <input type="text" 
-                           name="search" 
-                           class="search-input" 
-                           placeholder="{% trans 'Поиск товаров...' %}" 
-                           value="{% if search_query %}{{ search_query }}{% endif %}"
-                           hx-get="{% url 'shop:htmx_catalog_filter' %}"
-                           hx-trigger="keyup changed delay:500ms"
-                           hx-target="#product-grid"
-                           hx-indicator="#search-loading">
-                    <i class="fas fa-search"></i>
-                    <div id="search-loading" class="htmx-indicator">
-                        <i class="fas fa-spinner fa-spin"></i>
+                <div class="filters-container">
+            <form method="GET" id="catalog-filters" class="filters-form">
+                <!-- Поиск -->
+                    <div class="filter-group">
+                    <label for="search">Поиск:</label>
+                            <input type="text" 
+                           id="search" 
+                                   name="search" 
+                                   value="{{ search_query|default:'' }}"
+                                   placeholder="Поиск товаров..."
+                           class="filter-input">
                     </div>
+
+                <!-- Фильтр по полу -->
+                    <div class="filter-group">
+                    <label for="gender">Пол:</label>
+                    <select id="gender" name="gender" class="filter-select">
+                        <option value="">Все</option>
+                        <option value="men" {% if current_gender == 'men' %}selected{% endif %}>Мужская</option>
+                        <option value="women" {% if current_gender == 'women' %}selected{% endif %}>Женская</option>
+                        <option value="kids" {% if current_gender == 'kids' %}selected{% endif %}>Детская</option>
+                        <option value="unisex" {% if current_gender == 'unisex' %}selected{% endif %}>Унисекс</option>
+                    </select>
+                    </div>
+
+                <!-- Фильтр по категориям -->
+                    <div class="filter-group">
+                    <label for="category">Категория:</label>
+                    <select id="category" name="category" class="filter-select">
+                        <option value="">Все категории</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.slug }}" 
+                                {% if current_category and current_category.slug == cat.slug %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                            {% endfor %}
+                    </select>
+                    </div>
+                    
+                <!-- Сортировка -->
+                <div class="filter-group">
+                    <label for="sort">Сортировка:</label>
+                    <select id="sort" name="sort" class="filter-select">
+                                <option value="name" {% if sort_by == 'name' %}selected{% endif %}>По названию</option>
+                                <option value="price-low" {% if sort_by == 'price-low' %}selected{% endif %}>Цена: по возрастанию</option>
+                                <option value="price-high" {% if sort_by == 'price-high' %}selected{% endif %}>Цена: по убыванию</option>
+                                <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Сначала новые</option>
+                            </select>
+                        </div>
+                        
+                <!-- Кнопки -->
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">Применить фильтры</button>
+                    <a href="{% url 'shop:catalog' %}" class="btn btn-secondary">Сбросить</a>
                 </div>
             </form>
-            
-            <div class="filters">
-                <button class="filter-btn {% if not current_category and not current_gender %}active{% endif %}" 
-                        hx-get="{% url 'shop:htmx_catalog_filter' %}"
-                        hx-target="#product-grid"
-                        hx-indicator="#filter-loading">
-                    {% trans "Все товары" %}
-                </button>
-                <button class="filter-btn {% if current_gender == 'men' %}active{% endif %}" 
-                        hx-get="{% url 'shop:htmx_catalog_filter' %}?gender=men"
-                        hx-target="#product-grid"
-                        hx-indicator="#filter-loading">
-                    {% trans "Мужская одежда" %}
-                </button>
-                <button class="filter-btn {% if current_gender == 'women' %}active{% endif %}" 
-                        hx-get="{% url 'shop:htmx_catalog_filter' %}?gender=women"
-                        hx-target="#product-grid"
-                        hx-indicator="#filter-loading">
-                    {% trans "Женская одежда" %}
-                </button>
-                <button class="filter-btn {% if current_gender == 'kids' %}active{% endif %}" 
-                        hx-get="{% url 'shop:htmx_catalog_filter' %}?gender=kids"
-                        hx-target="#product-grid"
-                        hx-indicator="#filter-loading">
-                    {% trans "Детская одежда" %}
-                </button>
-            </div>
-            
-            <div class="sort-options">
-                <select class="sort-select" 
-                        hx-get="{% url 'shop:htmx_catalog_filter' %}"
-                        hx-target="#product-grid"
-                        hx-trigger="change"
-                        hx-indicator="#filter-loading">
-                    <option value="name" {% if sort_by == 'name' %}selected{% endif %}>{% trans "По названию" %}</option>
-                    <option value="price-low" {% if sort_by == 'price-low' %}selected{% endif %}>{% trans "Цена: по возрастанию" %}</option>
-                    <option value="price-high" {% if sort_by == 'price-high' %}selected{% endif %}>{% trans "Цена: по убыванию" %}</option>
-                    <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>{% trans "Сначала новые" %}</option>
-                </select>
-                <div id="filter-loading" class="htmx-indicator">
-                    <i class="fas fa-spinner fa-spin"></i>
-                </div>
-            </div>
         </div>
     </div>
 </section>
 
-<!-- Products Grid -->
+                <!-- Products Grid -->
 <section class="products-section">
     <div class="container">
-        <div id="product-grid">
-            {% include 'shop/partials/product_grid.html' %}
+                <div id="catalog-content">
+                    <!-- Скрытое поле для передачи данных о избранном -->
+                    <input type="hidden" name="favorites" id="favorites-data" value="">
+                    {% include 'shop/partials/product_grid.html' %}
         </div>
     </div>
 </section>
+
+<!-- Results Info -->
+{% if products %}
+<div class="results-info">
+    <div class="container">
+        <p>Найдено товаров: {{ page_obj.paginator.count }}</p>
+        {% if current_category %}
+        <p>Категория: <strong>{{ current_category.name }}</strong></p>
+        {% endif %}
+        {% if current_gender %}
+        <p>Пол: <strong>{{ current_gender|title }}</strong></p>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
 {% endblock %}

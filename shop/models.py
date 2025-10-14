@@ -2,24 +2,21 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.text import slugify
-from django.utils.translation import gettext_lazy as _
-from django.utils import translation
-from .utils import TranslationMixin
 
 
-class Category(TranslationMixin, models.Model):
+class Category(models.Model):
     """Модель категории товаров"""
-    name = models.CharField(max_length=100, verbose_name=_("Название"))
-    slug = models.SlugField(max_length=100, unique=True, verbose_name=_("URL"))
-    description = models.TextField(blank=True, verbose_name=_("Описание"))
-    image = models.ImageField(upload_to='categories/', blank=True, null=True, verbose_name=_("Изображение"))
-    is_active = models.BooleanField(default=True, verbose_name=_("Активна"))
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Создано"))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Обновлено"))
+    name = models.CharField(max_length=100, verbose_name="Название")
+    slug = models.SlugField(max_length=100, blank=True, null=True, verbose_name="URL")
+    description = models.TextField(blank=True, verbose_name="Описание")
+    image = models.ImageField(upload_to='categories/', blank=True, null=True, verbose_name="Изображение")
+    is_active = models.BooleanField(default=True, verbose_name="Активна")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлено")
 
     class Meta:
-        verbose_name = _("Категория")
-        verbose_name_plural = _("Категории")
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
         ordering = ['name']
 
     def __str__(self):
@@ -30,22 +27,8 @@ class Category(TranslationMixin, models.Model):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-    def get_translated_name(self, language=None):
-        """Получить переведенное название категории"""
-        if language:
-            with translation.override(language):
-                return getattr(self, f'name_{language}', self.name)
-        return getattr(self, f'name_{translation.get_language()}', self.name)
 
-    def get_translated_description(self, language=None):
-        """Получить переведенное описание категории"""
-        if language:
-            with translation.override(language):
-                return getattr(self, f'description_{language}', self.description)
-        return getattr(self, f'description_{translation.get_language()}', self.description)
-
-
-class Product(TranslationMixin, models.Model):
+class Product(models.Model):
     """Модель товара"""
     SIZE_CHOICES = [
         ('XS', 'XS'),
@@ -57,47 +40,32 @@ class Product(TranslationMixin, models.Model):
     ]
 
     GENDER_CHOICES = [
-        ('men', _('Мужская')),
-        ('women', _('Женская')),
-        ('kids', _('Детская')),
-        ('unisex', _('Унисекс')),
+        ('men', 'Мужская'),
+        ('women', 'Женская'),
+        ('kids', 'Детская'),
+        ('unisex', 'Унисекс'),
     ]
 
-    name = models.CharField(max_length=200, verbose_name=_("Название"))
-    slug = models.SlugField(max_length=200, unique=True, verbose_name=_("URL"))
-    description = models.TextField(verbose_name=_("Описание"))
-    short_description = models.CharField(max_length=300, blank=True, verbose_name=_("Краткое описание"))
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', verbose_name=_("Категория"))
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='unisex', verbose_name=_("Пол"))
-    
+    name = models.CharField(max_length=200, verbose_name="Название")
+    slug = models.SlugField(max_length=200, blank=True, null=True, verbose_name="URL")
+    description = models.TextField(verbose_name="Описание")
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', verbose_name="Категория")
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='unisex', verbose_name="Пол")
     # Цены
-    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_("Цена"))
-    old_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name=_("Старая цена"))
-    
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Цена")
+    old_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name="Старая цена")
     # Изображения
-    main_image = models.ImageField(upload_to='products/', verbose_name=_("Основное изображение"))
-    
-    # Характеристики
-    material = models.CharField(max_length=100, blank=True, verbose_name=_("Материал"))
-    country = models.CharField(max_length=100, default="Россия", verbose_name=_("Страна производства"))
-    care_instructions = models.TextField(blank=True, verbose_name=_("Инструкции по уходу"))
-    
+    main_image = models.ImageField(upload_to='products/', verbose_name="Основное изображение")
     # Размеры и цвета
-    available_sizes = models.CharField(max_length=50, default="S,M,L,XL", verbose_name=_("Доступные размеры"))
-    available_colors = models.CharField(max_length=200, default="white,blue,black", verbose_name=_("Доступные цвета"))
-    
-    # Статус
-    is_active = models.BooleanField(default=True, verbose_name=_("Активен"))
-    is_featured = models.BooleanField(default=False, verbose_name=_("Рекомендуемый"))
-    stock_quantity = models.PositiveIntegerField(default=0, verbose_name=_("Количество на складе"))
-    
+    available_sizes = models.CharField(max_length=50, default="S,M,L,XL", verbose_name="Доступные размеры")
+    available_colors = models.CharField(max_length=200, default="white,blue,black", verbose_name="Доступные цвета")
     # Метаданные
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Создано"))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Обновлено"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлено")
 
     class Meta:
-        verbose_name = _("Товар")
-        verbose_name_plural = _("Товары")
+        verbose_name = "Товар"
+        verbose_name_plural = "Товары"
         ordering = ['-created_at']
 
     def __str__(self):
@@ -125,128 +93,58 @@ class Product(TranslationMixin, models.Model):
         """Возвращает список доступных цветов"""
         return [color.strip() for color in self.available_colors.split(',')]
 
-    def get_translated_name(self, language=None):
-        """Получить переведенное название товара"""
-        if language:
-            with translation.override(language):
-                return getattr(self, f'name_{language}', self.name)
-        return getattr(self, f'name_{translation.get_language()}', self.name)
-
-    def get_translated_description(self, language=None):
-        """Получить переведенное описание товара"""
-        if language:
-            with translation.override(language):
-                return getattr(self, f'description_{language}', self.description)
-        return getattr(self, f'description_{translation.get_language()}', self.description)
-
-    def get_translated_short_description(self, language=None):
-        """Получить переведенное краткое описание товара"""
-        if language:
-            with translation.override(language):
-                return getattr(self, f'short_description_{language}', self.short_description)
-        return getattr(self, f'short_description_{translation.get_language()}', self.short_description)
-
-    def get_translated_material(self, language=None):
-        """Получить переведенный материал товара"""
-        if language:
-            with translation.override(language):
-                return getattr(self, f'material_{language}', self.material)
-        return getattr(self, f'material_{translation.get_language()}', self.material)
-
-    def get_translated_care_instructions(self, language=None):
-        """Получить переведенные инструкции по уходу"""
-        if language:
-            with translation.override(language):
-                return getattr(self, f'care_instructions_{language}', self.care_instructions)
-        return getattr(self, f'care_instructions_{translation.get_language()}', self.care_instructions)
-
 
 class ProductImage(models.Model):
     """Модель дополнительных изображений товара"""
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images', verbose_name=_("Товар"))
-    image = models.ImageField(upload_to='products/', verbose_name=_("Изображение"))
-    alt_text = models.CharField(max_length=200, blank=True, verbose_name=_("Альтернативный текст"))
-    is_main = models.BooleanField(default=False, verbose_name=_("Основное изображение"))
-    order = models.PositiveIntegerField(default=0, verbose_name=_("Порядок"))
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images', verbose_name="Товар")
+    image = models.ImageField(upload_to='products/', verbose_name="Изображение")
+    alt_text = models.CharField(max_length=200, blank=True, verbose_name="Альтернативный текст")
+    is_main = models.BooleanField(default=False, verbose_name="Основное изображение")
+    order = models.PositiveIntegerField(default=0, verbose_name="Порядок")
 
     class Meta:
-        verbose_name = _("Изображение товара")
-        verbose_name_plural = _("Изображения товаров")
+        verbose_name = "Изображение товара"
+        verbose_name_plural = "Изображения товаров"
         ordering = ['order']
 
     def __str__(self):
         return f"{self.product.name} - Изображение {self.order}"
 
 
-class Review(TranslationMixin, models.Model):
+class Review(models.Model):
     """Модель отзыва о товаре"""
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews', verbose_name=_("Товар"))
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("Пользователь"))
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews', verbose_name="Товар")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь")
     rating = models.PositiveIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)],
-        verbose_name=_("Оценка")
+        verbose_name="Оценка"
     )
-    title = models.CharField(max_length=200, verbose_name=_("Заголовок"))
-    text = models.TextField(verbose_name=_("Текст отзыва"))
-    is_approved = models.BooleanField(default=True, verbose_name=_("Одобрен"))
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Создано"))
+    title = models.CharField(max_length=200, verbose_name="Заголовок")
+    text = models.TextField(verbose_name="Текст отзыва")
+    is_approved = models.BooleanField(default=True, verbose_name="Одобрен")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
 
     class Meta:
-        verbose_name = _("Отзыв")
-        verbose_name_plural = _("Отзывы")
+        verbose_name = "Отзыв"
+        verbose_name_plural = "Отзывы"
         ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.product.name} - {self.user.username} ({self.rating}/5)"
 
-    def get_translated_title(self, language=None):
-        """Получить переведенный заголовок отзыва"""
-        if language:
-            with translation.override(language):
-                return getattr(self, f'title_{language}', self.title)
-        return getattr(self, f'title_{translation.get_language()}', self.title)
 
-    def get_translated_text(self, language=None):
-        """Получить переведенный текст отзыва"""
-        if language:
-            with translation.override(language):
-                return getattr(self, f'text_{language}', self.text)
-        return getattr(self, f'text_{translation.get_language()}', self.text)
-
-
-class Contact(TranslationMixin, models.Model):
+class Contact(models.Model):
     """Модель контактной информации"""
-    name = models.CharField(max_length=100, verbose_name=_("Название"))
-    phone = models.CharField(max_length=20, verbose_name=_("Телефон"))
-    email = models.EmailField(verbose_name=_("Email"))
-    address = models.TextField(verbose_name=_("Адрес"))
-    working_hours = models.CharField(max_length=200, verbose_name=_("Часы работы"))
-    is_active = models.BooleanField(default=True, verbose_name=_("Активен"))
+    name = models.CharField(max_length=100, verbose_name="Название")
+    phone = models.CharField(max_length=20, verbose_name="Телефон")
+    email = models.EmailField(verbose_name="Email")
+    address = models.TextField(verbose_name="Адрес")
+    working_hours = models.CharField(max_length=200, verbose_name="Часы работы")
+    is_active = models.BooleanField(default=True, verbose_name="Активен")
 
     class Meta:
-        verbose_name = _("Контакт")
-        verbose_name_plural = _("Контакты")
+        verbose_name = "Контакт"
+        verbose_name_plural = "Контакты"
 
     def __str__(self):
         return self.name
-
-    def get_translated_name(self, language=None):
-        """Получить переведенное название контакта"""
-        if language:
-            with translation.override(language):
-                return getattr(self, f'name_{language}', self.name)
-        return getattr(self, f'name_{translation.get_language()}', self.name)
-
-    def get_translated_address(self, language=None):
-        """Получить переведенный адрес"""
-        if language:
-            with translation.override(language):
-                return getattr(self, f'address_{language}', self.address)
-        return getattr(self, f'address_{translation.get_language()}', self.address)
-
-    def get_translated_working_hours(self, language=None):
-        """Получить переведенные часы работы"""
-        if language:
-            with translation.override(language):
-                return getattr(self, f'working_hours_{language}', self.working_hours)
-        return getattr(self, f'working_hours_{translation.get_language()}', self.working_hours)

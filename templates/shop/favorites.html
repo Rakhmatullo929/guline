@@ -1,29 +1,10 @@
 {% extends 'shop/base.html' %}
 {% load static %}
-{% load i18n %}
 
-{% block title %}{% trans "Избранное" %} - GULINE{% endblock %}
+{% block title %}Избранное - GULINE{% endblock %}
 
 {% block extra_js %}
 <script>
-// Переводы для JavaScript
-const translations = {
-    emptyFavorites: "{% trans 'Список избранного пуст' %}",
-    addToFavorites: "{% trans 'Добавьте товары в избранное, чтобы они отображались здесь' %}",
-    goToCatalog: "{% trans 'Перейти в каталог' %}",
-    loadingFavorites: "{% trans 'Загрузка избранных товаров...' %}",
-    favoritesTitle: "{% trans 'Избранные товары' %}",
-    productsCount: "{% trans 'товаров' %}",
-    clearAll: "{% trans 'Очистить все' %}",
-    removeFromFavorites: "{% trans 'Удалить из избранного' %}",
-    menGender: "{% trans 'Мужская' %}",
-    womenGender: "{% trans 'Женская' %}",
-    kidsGender: "{% trans 'Детская' %}",
-    unisexGender: "{% trans 'Унисекс' %}",
-    sizes: "{% trans 'Размеры' %}",
-    details: "{% trans 'Подробнее' %}",
-    confirmClear: "{% trans 'Вы уверены, что хотите очистить весь список избранного?' %}"
-};
 
 document.addEventListener('DOMContentLoaded', function() {
     // Таймаут для загрузки
@@ -72,10 +53,10 @@ function showEmptyFavorites() {
             <div class="empty-favorites">
                 <div class="empty-favorites-content">
                     <i class="fas fa-heart"></i>
-                    <h2>${translations.emptyFavorites}</h2>
-                    <p>${translations.addToFavorites}</p>
+                    <h2>Список избранного пуст</h2>
+                    <p>Добавьте товары в избранное, чтобы они отображались здесь</p>
                     <a href="{% url 'shop:catalog' %}" class="btn btn-primary">
-                        ${translations.goToCatalog}
+                        Перейти в каталог
                     </a>
                 </div>
             </div>
@@ -92,7 +73,7 @@ async function loadFavoritesProducts(productIds) {
         container.innerHTML = `
             <div class="loading-favorites">
                 <i class="fas fa-spinner fa-spin"></i>
-                <p>${translations.loadingFavorites}</p>
+                <p>Загрузка избранных товаров...</p>
             </div>
         `;
         
@@ -135,13 +116,13 @@ function renderFavoritesProducts(products) {
     let html = `
         <div class="favorites-header">
             <div class="favorites-header-left">
-                <h1>${translations.favoritesTitle}</h1>
-                <span class="favorites-count">${products.length} ${translations.productsCount}</span>
+                <h1>Избранные товары</h1>
+                <span class="favorites-count">${products.length} товаров</span>
             </div>
             <div class="favorites-actions">
                 <button class="btn btn-secondary" onclick="clearAllFavorites()">
                     <i class="fas fa-trash"></i>
-                    ${translations.clearAll}
+                    Очистить все
                 </button>
             </div>
         </div>
@@ -152,7 +133,7 @@ function renderFavoritesProducts(products) {
         html += `
             <div class="favorite-product-card" data-product-id="${product.id}">
                 <div class="product-image">
-                    <a href="/product/${product.slug}/">
+                    <a href="{% url 'shop:product_detail' 0 %}".replace('0', product.slug)>
                         ${product.main_image ? 
                             `<img src="${product.main_image}" alt="${product.name}" loading="lazy">` :
                             `<div class="product-placeholder"><i class="fas fa-tshirt"></i></div>`
@@ -162,16 +143,16 @@ function renderFavoritesProducts(products) {
                             ''
                         }
                     </a>
-                    <button class="remove-favorite-btn" onclick="removeFromFavorites(${product.id})" title="${translations.removeFromFavorites}">
+                    <button class="remove-favorite-btn" onclick="removeFromFavorites(${product.id})" title="Удалить из избранного">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <div class="product-info">
                     <h3 class="product-name">
-                        <a href="/product/${product.slug}/">${product.name}</a>
+                        <a href="{% url 'shop:product_detail' 0 %}".replace('0', product.slug)>${product.name}</a>
                     </h3>
                     <div class="product-category">
-                        <a href="/catalog/?category=${product.category.slug}">${product.category.name}</a>
+                        <a href="{% url 'shop:catalog' %}?category=${product.category.slug}">${product.category.name}</a>
                     </div>
                     <div class="product-price">
                         ${product.old_price ? 
@@ -183,21 +164,21 @@ function renderFavoritesProducts(products) {
                     <div class="product-details">
                         <div class="product-gender">
                             <i class="fas fa-${product.gender === 'men' ? 'male' : product.gender === 'women' ? 'female' : 'child'}"></i>
-                            ${product.gender === 'men' ? translations.menGender : 
-                              product.gender === 'women' ? translations.womenGender : 
-                              product.gender === 'kids' ? translations.kidsGender : 
-                              translations.unisexGender}
+                            ${product.gender === 'men' ? 'Мужская' : 
+                              product.gender === 'women' ? 'Женская' : 
+                              product.gender === 'kids' ? 'Детская' : 
+                              'Унисекс'}
                         </div>
                         ${product.available_sizes.length > 0 ? 
                             `<div class="product-sizes">
-                                <strong>${translations.sizes}:</strong> ${product.available_sizes.join(', ')}
+                                <strong>Размеры:</strong> ${product.available_sizes.join(', ')}
                             </div>` : 
                             ''
                         }
                     </div>
                     <div class="product-actions">
-                        <a href="/product/${product.slug}/" class="btn btn-primary">
-                            ${translations.details}
+                        <a href="{% url 'shop:product_detail' 0 %}".replace('0', product.id) class="btn btn-primary">
+                            Подробнее
                         </a>
                     </div>
                 </div>
@@ -228,14 +209,14 @@ function removeFromFavorites(productId) {
             // Обновляем счетчик
             const countElement = document.querySelector('.favorites-count');
             if (countElement) {
-                countElement.textContent = `${remainingCards.length} ${translations.productsCount}`;
+                countElement.textContent = `${remainingCards.length} товаров`;
             }
         }
     }
 }
 
 function clearAllFavorites() {
-    if (confirm(translations.confirmClear)) {
+    if (confirm('Вы уверены, что хотите очистить весь список избранного?')) {
         const favoritesManager = window.favoritesManager;
         if (favoritesManager) {
             favoritesManager.clearFavorites();
@@ -250,8 +231,8 @@ function clearAllFavorites() {
 <!-- Page Header -->
 <section class="page-header">
     <div class="container">
-        <h1>{% trans "Избранное" %}</h1>
-        <p>{% trans "Ваши любимые товары" %}</p>
+        <h1>Избранное</h1>
+        <p>Ваши любимые товары</p>
     </div>
 </section>
 
@@ -264,10 +245,10 @@ function clearAllFavorites() {
                 <div class="empty-favorites">
                     <div class="empty-favorites-content">
                         <i class="fas fa-heart"></i>
-                        <h2>{% trans "JavaScript требуется" %}</h2>
-                        <p>{% trans "Для работы с избранным товарами необходимо включить JavaScript в вашем браузере" %}</p>
+                        <h2>JavaScript требуется</h2>
+                        <p>Для работы с избранным товарами необходимо включить JavaScript в вашем браузере</p>
                         <a href="{% url 'shop:catalog' %}" class="btn btn-primary">
-                            {% trans "Перейти в каталог" %}
+                            Перейти в каталог
                         </a>
                     </div>
                 </div>
@@ -276,7 +257,7 @@ function clearAllFavorites() {
             <!-- Контент будет загружен через JavaScript -->
             <div class="loading-favorites" id="loading-indicator">
                 <i class="fas fa-spinner fa-spin"></i>
-                <p>{% trans "Загрузка избранных товаров..." %}</p>
+                <p>Загрузка избранных товаров...</p>
             </div>
         </div>
     </div>

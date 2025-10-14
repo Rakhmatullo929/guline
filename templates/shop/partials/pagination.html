@@ -1,0 +1,188 @@
+{% load static %}
+
+<!-- Pagination Component -->
+{% if page_obj.paginator.num_pages > 1 %}
+<div class="pagination-wrapper">
+    <!-- Pagination Info -->
+    <div class="pagination-info">
+        <div class="pagination-stats">
+            <span class="pagination-text">
+                Показано <strong>{{ page_obj.start_index }}-{{ page_obj.end_index }}</strong> 
+                из <strong>{{ page_obj.paginator.count }}</strong> товаров
+            </span>
+        </div>
+        <div class="pagination-controls">
+            <span class="page-size-selector">
+                <label for="page-size">На странице:</label>
+                <select id="page-size" name="page_size" class="page-size-select">
+                    <option value="12" {% if page_obj.paginator.per_page == 12 %}selected{% endif %}>12</option>
+                    <option value="24" {% if page_obj.paginator.per_page == 24 %}selected{% endif %}>24</option>
+                    <option value="48" {% if page_obj.paginator.per_page == 48 %}selected{% endif %}>48</option>
+                </select>
+            </span>
+        </div>
+    </div>
+
+    <!-- Pagination Navigation -->
+    <nav class="pagination-nav" aria-label="Навигация по страницам">
+        <ul class="pagination-list">
+            <!-- First Page -->
+            {% if page_obj.number > 3 %}
+                <li class="pagination-item">
+                    <a href="?page=1{{ query_params }}" 
+                       class="pagination-link pagination-first"
+                       hx-get="{% url 'shop:htmx_catalog_filter' %}?page=1{{ query_params }}"
+                       hx-target="#catalog-content"
+                       hx-swap="innerHTML"
+                       hx-indicator="#catalog-loading"
+                       title="Первая страница">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                </li>
+            {% endif %}
+
+            <!-- Previous Button -->
+            {% if page_obj.has_previous %}
+                <li class="pagination-item">
+                    <a href="?page={{ page_obj.previous_page_number }}{{ query_params }}" 
+                       class="pagination-link pagination-prev"
+                       hx-get="{% url 'shop:htmx_catalog_filter' %}?page={{ page_obj.previous_page_number }}{{ query_params }}"
+                       hx-target="#catalog-content"
+                       hx-swap="innerHTML"
+                       hx-indicator="#catalog-loading"
+                       title="Предыдущая страница">
+                        <i class="fas fa-chevron-left"></i>
+                        <span class="pagination-text">Назад</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="pagination-item">
+                    <span class="pagination-link pagination-prev disabled" title="Предыдущая страница">
+                        <i class="fas fa-chevron-left"></i>
+                        <span class="pagination-text">Назад</span>
+                    </span>
+                </li>
+            {% endif %}
+
+            <!-- Page Numbers -->
+            {% for num in page_obj.paginator.page_range %}
+                {% if num == page_obj.number %}
+                    <li class="pagination-item">
+                        <span class="pagination-link pagination-number active" aria-current="page">
+                            {{ num }}
+                        </span>
+                    </li>
+                {% elif num > page_obj.number|add:-3 and num < page_obj.number|add:3 %}
+                    <li class="pagination-item">
+                        <a href="?page={{ num }}{{ query_params }}" 
+                           class="pagination-link pagination-number"
+                           hx-get="{% url 'shop:htmx_catalog_filter' %}?page={{ num }}{{ query_params }}"
+                           hx-target="#catalog-content"
+                           hx-swap="innerHTML"
+                           hx-indicator="#catalog-loading"
+                           title="Страница {{ num }}">
+                            {{ num }}
+                        </a>
+                    </li>
+                {% elif num == 1 and page_obj.number > 4 %}
+                    <li class="pagination-item">
+                        <a href="?page=1{{ query_params }}" 
+                           class="pagination-link pagination-number"
+                           hx-get="{% url 'shop:htmx_catalog_filter' %}?page=1{{ query_params }}"
+                           hx-target="#catalog-content"
+                           hx-swap="innerHTML"
+                           hx-indicator="#catalog-loading"
+                           title="Страница 1">
+                            1
+                        </a>
+                    </li>
+                    <li class="pagination-item">
+                        <span class="pagination-ellipsis">...</span>
+                    </li>
+                {% elif num == page_obj.paginator.num_pages and page_obj.number < page_obj.paginator.num_pages|add:-3 %}
+                    <li class="pagination-item">
+                        <span class="pagination-ellipsis">...</span>
+                    </li>
+                    <li class="pagination-item">
+                        <a href="?page={{ page_obj.paginator.num_pages }}{{ query_params }}" 
+                           class="pagination-link pagination-number"
+                           hx-get="{% url 'shop:htmx_catalog_filter' %}?page={{ page_obj.paginator.num_pages }}{{ query_params }}"
+                           hx-target="#catalog-content"
+                           hx-swap="innerHTML"
+                           hx-indicator="#catalog-loading"
+                           title="Страница {{ page_obj.paginator.num_pages }}">
+                            {{ page_obj.paginator.num_pages }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            <!-- Next Button -->
+            {% if page_obj.has_next %}
+                <li class="pagination-item">
+                    <a href="?page={{ page_obj.next_page_number }}{{ query_params }}" 
+                       class="pagination-link pagination-next"
+                       hx-get="{% url 'shop:htmx_catalog_filter' %}?page={{ page_obj.next_page_number }}{{ query_params }}"
+                       hx-target="#catalog-content"
+                       hx-swap="innerHTML"
+                       hx-indicator="#catalog-loading"
+                       title="Следующая страница">
+                        <span class="pagination-text">Вперед</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            {% else %}
+                <li class="pagination-item">
+                    <span class="pagination-link pagination-next disabled" title="Следующая страница">
+                        <span class="pagination-text">Вперед</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </span>
+                </li>
+            {% endif %}
+
+            <!-- Last Page -->
+            {% if page_obj.number < page_obj.paginator.num_pages|add:-2 %}
+                <li class="pagination-item">
+                    <a href="?page={{ page_obj.paginator.num_pages }}{{ query_params }}" 
+                       class="pagination-link pagination-last"
+                       hx-get="{% url 'shop:htmx_catalog_filter' %}?page={{ page_obj.paginator.num_pages }}{{ query_params }}"
+                       hx-target="#catalog-content"
+                       hx-swap="innerHTML"
+                       hx-indicator="#catalog-loading"
+                       title="Последняя страница">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- Quick Jump -->
+    <div class="pagination-jump">
+        <label for="page-jump">Перейти к странице:</label>
+        <div class="jump-controls">
+            <input type="number" 
+                   id="page-jump" 
+                   class="page-jump-input" 
+                   min="1" 
+                   max="{{ page_obj.paginator.num_pages }}"
+                   value="{{ page_obj.number }}"
+                   placeholder="{{ page_obj.number }}">
+            <button type="button" 
+                    class="jump-button"
+                    onclick="jumpToPage()"
+                    title="Перейти к странице">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Indicator -->
+<div id="catalog-loading" class="loading-indicator" style="display: none;">
+    <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>Загрузка...</span>
+    </div>
+</div>
+{% endif %}
