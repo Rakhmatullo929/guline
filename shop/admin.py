@@ -10,16 +10,13 @@ from .models import (
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug', 'is_active', 'created_at']
     list_filter = ['is_active', 'created_at']
-    search_fields = ['name', 'description']
+    search_fields = ['name']
     prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ['created_at', 'updated_at']
     
     fieldsets = (
         ('Основная информация', {
-            'fields': ('name', 'slug', 'description')
-        }),
-        ('Изображение', {
-            'fields': ('image',)
+            'fields': ('name', 'slug')
         }),
         ('Статус', {
             'fields': ('is_active',)
@@ -48,7 +45,7 @@ class ProductAdmin(admin.ModelAdmin):
         'created_at', 'updated_at'
     ]
     search_fields = [
-        'name', 'description', 'material'
+        'name', 'description'
     ]
     prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ['created_at', 'updated_at', 'discount_percentage', ]

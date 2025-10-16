@@ -8,8 +8,6 @@ class Category(models.Model):
     """Модель категории товаров"""
     name = models.CharField(max_length=100, verbose_name="Название")
     slug = models.SlugField(max_length=100, blank=True, null=True, verbose_name="URL")
-    description = models.TextField(blank=True, verbose_name="Описание")
-    image = models.ImageField(upload_to='categories/', blank=True, null=True, verbose_name="Изображение")
     is_active = models.BooleanField(default=True, verbose_name="Активна")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлено")
