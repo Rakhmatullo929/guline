@@ -50,9 +50,9 @@
                 <h1 class="product-title">{{ product.name }}</h1>
                 
                 <div class="product-price">
-                    <span class="current-price">{{ product.price|floatformat:0 }} ₽</span>
+                    <span class="current-price">{{ product.price|floatformat:0 }} сум</span>
                     {% if product.old_price %}
-                        <span class="old-price">{{ product.old_price|floatformat:0 }} ₽</span>
+                        <span class="old-price">{{ product.old_price|floatformat:0 }} сум</span>
                         <span class="discount">-{{ product.discount_percentage }}%</span>
                     {% endif %}
                 </div>
@@ -98,7 +98,7 @@
                 <div class="product-features">
                     <div class="feature">
                         <i class="fas fa-truck"></i>
-                        <span>Бесплатная доставка от 2000 ₽</span>
+                        <span>Бесплатная доставка от 200 000 сум</span>
                     </div>
                     <div class="feature">
                         <i class="fas fa-shield-alt"></i>
@@ -204,9 +204,9 @@
                 <div class="product-info">
                     <h3 class="product-name">{{ product.name }}</h3>
                     <div class="product-price">
-                        <span class="current-price">{{ product.price|floatformat:0 }} ₽</span>
+                        <span class="current-price">{{ product.price|floatformat:0 }} сум</span>
                         {% if product.old_price %}
-                            <span class="old-price">{{ product.old_price|floatformat:0 }} ₽</span>
+                            <span class="old-price">{{ product.old_price|floatformat:0 }} сум</span>
                         {% endif %}
                     </div>
                     <a href="{% url 'shop:product_detail' product.slug %}" class="view-btn">Подробнее</a>

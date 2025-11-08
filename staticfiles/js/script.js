@@ -13,7 +13,7 @@ function quickView(productId) {
     
     const product = products[productId];
     if (product) {
-        alert(`${product.name}\nЦена: ${product.price.toLocaleString()} ₽\n\n${product.description}`);
+        alert(`${product.name}\nЦена: ${product.price.toLocaleString()} сум\n\n${product.description}`);
     }
 }
 

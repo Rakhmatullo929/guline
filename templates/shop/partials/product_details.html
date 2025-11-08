@@ -35,9 +35,9 @@
         <div class="product-details">
             <div class="product-price">
                 {% if product.old_price %}
-                    <span class="old-price">{{ product.old_price }} ₽</span>
+                    <span class="old-price">{{ product.old_price }} сум</span>
                 {% endif %}
-                <span class="current-price">{{ product.price }} ₽</span>
+                <span class="current-price">{{ product.price }} сум</span>
                 {% if product.discount_percentage > 0 %}
                     <span class="discount-badge">-{{ product.discount_percentage }}%</span>
                 {% endif %}

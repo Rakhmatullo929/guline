@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Telegram Order Function
 function sendTelegramMessage(productName, productPrice) {
-    const message = `Привет! Хочу заказать товар:\n\n📦 ${productName}\n💰 Цена: ${productPrice} ₽\n\nПожалуйста, уточните наличие и условия доставки.`;
+    const message = `Привет! Хочу заказать товар:\n\n📦 ${productName}\n💰 Цена: ${productPrice} сум\n\nПожалуйста, уточните наличие и условия доставки.`;
     const telegramUrl = `https://t.me/z_gulinigor01?text=${encodeURIComponent(message)}`;
     
     // Открываем Telegram с предзаполненным сообщением

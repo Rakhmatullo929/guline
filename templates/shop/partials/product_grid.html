@@ -34,9 +34,9 @@
                 </h3>
                 <div class="product-price">
                     {% if product.old_price %}
-                        <span class="old-price">{{ product.old_price }} ₽</span>
+                        <span class="old-price">{{ product.old_price }} сум</span>
                     {% endif %}
-                    <span class="current-price">{{ product.price }} ₽</span>
+                    <span class="current-price">{{ product.price }} сум</span>
                 </div>
                 <a href="{% url 'shop:product_detail' product.slug %}" class="view-btn">
                     Подробнее
